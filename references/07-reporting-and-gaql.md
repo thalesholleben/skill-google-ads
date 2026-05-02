@@ -1,18 +1,18 @@
-# 07 — Reporting, GAQL e Automação Python
+# 07 - Reporting, GAQL, and Python Automation
 
-> Carregue este arquivo quando o usuário pedir para gerar relatórios, escrever queries GAQL, automatizar extração de dados ou montar dashboards de Google Ads.
+> Load this file when the user asks to generate reports, write GAQL queries, automate data extraction, or build Google Ads dashboards.
 
 ---
 
-## 1. GAQL — Google Ads Query Language
+## 1. GAQL - Google Ads Query Language
 
-GAQL é a linguagem de consulta da Google Ads API. Sintaxe similar a SQL.
+GAQL is the query language of the Google Ads API. Its syntax is similar to SQL.
 
-### Estrutura básica
+### Basic structure
 
 ```sql
 SELECT
-  [campos: resource.field, metrics.field, segments.field]
+  [fields: resource.field, metrics.field, segments.field]
 FROM
   [resource]
 WHERE
@@ -23,26 +23,26 @@ LIMIT
   [n]
 ```
 
-### Resources principais
+### Main resources
 
-| Resource | O que contém |
+| Resource | Contains |
 |---|---|
-| `campaign` | Métricas por campanha |
-| `ad_group` | Métricas por ad group |
-| `keyword_view` | Métricas por keyword |
-| `search_term_view` | Search terms reais disparados |
-| `ad_group_ad` | Métricas por anúncio |
-| `geographic_view` | Métricas por localização |
-| `hourly_metrics_view` | Métricas por hora |
-| `audience_view` | Métricas por audiência |
-| `asset_view` | Métricas de assets/extensions |
-| `campaign_audience_view` | Audiences em campaign level |
+| `campaign` | Metrics by campaign |
+| `ad_group` | Metrics by ad group |
+| `keyword_view` | Metrics by keyword |
+| `search_term_view` | Real triggered search terms |
+| `ad_group_ad` | Metrics by ad |
+| `geographic_view` | Metrics by location |
+| `hourly_metrics_view` | Metrics by hour |
+| `audience_view` | Metrics by audience |
+| `asset_view` | Asset/extension metrics |
+| `campaign_audience_view` | Audiences at campaign level |
 
 ---
 
-## 2. Queries prontas
+## 2. Ready-to-use queries
 
-### Performance de campanhas (últimos 30 dias)
+### Campaign performance for the last 30 days
 
 ```sql
 SELECT
@@ -70,7 +70,7 @@ ORDER BY metrics.cost_micros DESC
 
 ---
 
-### Search terms com gasto e conversões
+### Search terms with spend and conversions
 
 ```sql
 SELECT
@@ -95,7 +95,7 @@ LIMIT 1000
 
 ---
 
-### Keywords com Quality Score
+### Keywords with Quality Score
 
 ```sql
 SELECT
@@ -125,7 +125,7 @@ ORDER BY metrics.cost_micros DESC
 
 ---
 
-### Auction Insights por campanha
+### Auction Insights by campaign
 
 ```sql
 SELECT
@@ -147,7 +147,7 @@ ORDER BY metrics.auction_insight_search_impression_share DESC
 
 ---
 
-### Performance por dispositivo
+### Performance by device
 
 ```sql
 SELECT
@@ -170,7 +170,7 @@ ORDER BY metrics.cost_micros DESC
 
 ---
 
-### Performance por hora do dia
+### Performance by hour of day
 
 ```sql
 SELECT
@@ -191,7 +191,7 @@ ORDER BY segments.day_of_week, segments.hour
 
 ---
 
-### Performance por localização
+### Performance by location
 
 ```sql
 SELECT
@@ -212,7 +212,7 @@ ORDER BY metrics.cost_micros DESC
 
 ---
 
-### Ad performance com Ad Strength
+### Ad performance with Ad Strength
 
 ```sql
 SELECT
@@ -258,11 +258,11 @@ ORDER BY metrics.cost_micros DESC
 LIMIT 200
 ```
 
-*(cost_micros > 5000000 = > US$ 5 gastos sem conversão)*
+`cost_micros > 5000000` means more than $5 spent without conversion.
 
 ---
 
-### Série temporal semanal
+### Weekly time series
 
 ```sql
 SELECT
@@ -282,44 +282,44 @@ ORDER BY segments.week
 
 ---
 
-## 3. Scripts de automação Google Ads (JavaScript)
+## 3. Google Ads automation scripts (JavaScript)
 
-### Budget pacing monitor (roda diário)
+### Budget pacing monitor, runs daily
 
 ```javascript
-// Enviado para email se gasto projetado > meta mensal × 1.10
+// Sends email if projected spend > monthly goal x 1.10
 
 function main() {
   var today = new Date();
   var dayOfMonth = today.getDate();
   var daysInMonth = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
-  
+
   var MONTHLY_BUDGET = 1800; // USD
   var EMAIL_RECIPIENT = "your-email@example.com";
-  
+
   var campaigns = AdsApp.campaigns()
     .withCondition("Status = ENABLED")
     .forDateRange("THIS_MONTH")
     .get();
-  
+
   var totalSpent = 0;
   while (campaigns.hasNext()) {
     var c = campaigns.next();
     totalSpent += c.getStatsFor("THIS_MONTH").getCost();
   }
-  
+
   var projected = (totalSpent / dayOfMonth) * daysInMonth;
   var paceRatio = projected / MONTHLY_BUDGET;
-  
+
   if (paceRatio > 1.10 || paceRatio < 0.80) {
     MailApp.sendEmail(
       EMAIL_RECIPIENT,
-      "Alerta de Pacing Google Ads — " + today.toDateString(),
-      "Gasto atual: $" + totalSpent.toFixed(2) + "\n" +
-      "Projeção mês: $" + projected.toFixed(2) + "\n" +
-      "Meta: $" + MONTHLY_BUDGET + "\n" +
+      "Google Ads Pacing Alert - " + today.toDateString(),
+      "Current spend: $" + totalSpent.toFixed(2) + "\n" +
+      "Month projection: $" + projected.toFixed(2) + "\n" +
+      "Goal: $" + MONTHLY_BUDGET + "\n" +
       "Pacing: " + (paceRatio * 100).toFixed(1) + "%\n" +
-      (paceRatio > 1.10 ? "⚠️ ACIMA do orçamento!" : "⚠️ ABAIXO do orçamento!")
+      (paceRatio > 1.10 ? "ABOVE budget!" : "BELOW budget!")
     );
   }
 }
@@ -327,49 +327,49 @@ function main() {
 
 ---
 
-### CPA anomaly detector (roda diário)
+### CPA anomaly detector, runs daily
 
 ```javascript
 function main() {
   var LOOKBACK_DAYS = 14;
   var CPA_SPIKE_FACTOR = 1.5;
   var EMAIL_RECIPIENT = "your-email@example.com";
-  
+
   var campaigns = AdsApp.campaigns()
     .withCondition("Status = ENABLED")
     .get();
-  
+
   var alerts = [];
-  
+
   while (campaigns.hasNext()) {
     var c = campaigns.next();
     var statsYesterday = c.getStatsFor("YESTERDAY");
     var statsTrailing  = c.getStatsFor("LAST_14_DAYS");
-    
+
     var convYesterday = statsYesterday.getConversions();
     var costYesterday = statsYesterday.getCost();
     var convTrailing  = statsTrailing.getConversions();
     var costTrailing  = statsTrailing.getCost();
-    
-    if (convTrailing < 5) continue; // sem dados suficientes
-    
+
+    if (convTrailing < 5) continue; // not enough data
+
     var cpaYesterday = convYesterday > 0 ? costYesterday / convYesterday : 999;
     var cpaTrailing  = costTrailing / convTrailing;
-    
+
     if (cpaYesterday > cpaTrailing * CPA_SPIKE_FACTOR) {
-      alerts.push(c.getName() + ": CPA ontem=$" + cpaYesterday.toFixed(0) + 
-                  " vs média 14d=$" + cpaTrailing.toFixed(0));
+      alerts.push(c.getName() + ": CPA yesterday=$" + cpaYesterday.toFixed(0) +
+                  " vs 14d avg=$" + cpaTrailing.toFixed(0));
     }
-    
+
     if (convYesterday === 0 && costYesterday > 50) {
-      alerts.push(c.getName() + ": $" + costYesterday.toFixed(0) + " gastos, 0 conv ontem!");
+      alerts.push(c.getName() + ": $" + costYesterday.toFixed(0) + " spent, 0 conv yesterday!");
     }
   }
-  
+
   if (alerts.length > 0) {
     MailApp.sendEmail(
       EMAIL_RECIPIENT,
-      "⚠️ Google Ads Anomalia Detectada",
+      "Google Ads Anomaly Detected",
       alerts.join("\n")
     );
   }
@@ -378,38 +378,38 @@ function main() {
 
 ---
 
-### Broken URL checker (roda diário)
+### Broken URL checker, runs daily
 
 ```javascript
 function main() {
   var EMAIL_RECIPIENT = "your-email@example.com";
   var brokenUrls = [];
-  
+
   var ads = AdsApp.ads()
     .withCondition("Status = ENABLED")
     .withCondition("CampaignStatus = ENABLED")
     .get();
-  
+
   while (ads.hasNext()) {
     var ad = ads.next();
     var url = ad.urls().getFinalUrl();
     if (!url) continue;
-    
+
     try {
       var response = UrlFetchApp.fetch(url, {muteHttpExceptions: true});
       var code = response.getResponseCode();
       if (code >= 400) {
-        brokenUrls.push(url + " → HTTP " + code + " (" + ad.getCampaign().getName() + ")");
+        brokenUrls.push(url + " -> HTTP " + code + " (" + ad.getCampaign().getName() + ")");
       }
     } catch(e) {
-      brokenUrls.push(url + " → Erro: " + e.message);
+      brokenUrls.push(url + " -> Error: " + e.message);
     }
   }
-  
+
   if (brokenUrls.length > 0) {
     MailApp.sendEmail(
       EMAIL_RECIPIENT,
-      "🔴 URLs Quebradas — Google Ads",
+      "Broken URLs - Google Ads",
       brokenUrls.join("\n")
     );
   }
@@ -418,131 +418,131 @@ function main() {
 
 ---
 
-## 4. Formato dos relatórios `.docx` (Python)
+## 4. `.docx` report format (Python)
 
-Os scripts em `scripts/` geram relatórios Word. Estrutura de seções:
+The scripts in `scripts/` generate Word reports. Section structure:
 
-### Relatório interno (`build_report.py`)
+### Internal report (`build_report.py`)
 
-```
-1. Resumo Executivo
-   - KPIs do período
-   - Comparativo vs mês anterior
+```text
+1. Executive Summary
+   - Period KPIs
+   - Comparison vs previous month
 
-2. Performance por Campanha
-   - Tabela: campanha × impressões × clicks × conv × CPA × CTR
+2. Performance by Campaign
+   - Table: campaign x impressions x clicks x conv x CPA x CTR
 
-3. Performance por Dispositivo
-   - Tabela: Mobile / Desktop / Tablet
+3. Performance by Device
+   - Table: Mobile / Desktop / Tablet
 
-4. Search Terms — Top Performers
-   - Top 20 queries com conversão
+4. Search Terms - Top Performers
+   - Top 20 converting queries
 
 5. Zero-Conv Waste
-   - Queries que queimaram budget sem conv
+   - Queries that burned budget without conversions
 
 6. Auction Insights
-   - Top 5 competidores + interpretation
+   - Top 5 competitors + interpretation
 
-7. Performance por Condado / Geo
-   - Tabela: localização × conversões × CPA
+7. Performance by County / Geo
+   - Table: location x conversions x CPA
 
-8. Análise de Keywords
-   - QS médio, keywords pausadas, recomendações
+8. Keyword Analysis
+   - Average QS, paused keywords, recommendations
 
-9. Palavras Negativas Adicionadas
-   - Lista do período
+9. Negative Keywords Added
+   - Period list
 
-10. Plano de Ação
-    - Próximos passos priorizados
+10. Action Plan
+    - Prioritized next steps
 ```
 
-### Relatório cliente (`build_report_cliente.py`)
+### Client report (`build_report_cliente.py`)
 
-```
-Resumo do Mês (Heading 2 — aparece no sumário)
+```text
+Monthly Summary (Heading 2 - appears in table of contents)
 
-1. Resultados do Período (Heading 3)
-2. Qualidade do Tráfego (Heading 3)
-3. Posicionamento no Mercado (Heading 3)
-4. Melhorias Aplicadas (Heading 3)
-5. Metas vs Realizado (Heading 3)
-6. Realocação de Verba (Heading 3)
-7. Observações Estratégicas (Heading 3)
+1. Period Results (Heading 3)
+2. Traffic Quality (Heading 3)
+3. Market Positioning (Heading 3)
+4. Improvements Applied (Heading 3)
+5. Goals vs Actuals (Heading 3)
+6. Budget Reallocation (Heading 3)
+7. Strategic Notes (Heading 3)
 
-[Fonte: Montserrat | Tom: positivo | Omite: falhas internas]
+[Font: Montserrat | Tone: positive | Omits: internal failures]
 ```
 
 ---
 
-## 5. N-gram analysis em Python — como usar
+## 5. N-gram analysis in Python - how to use
 
-O script `scripts/n_gram_analysis.py` analisa search terms de um CSV exportado do Google Ads.
+The script `scripts/n_gram_analysis.py` analyzes search terms from a CSV exported from Google Ads.
 
-### Input: exportar do Google Ads
+### Input: export from Google Ads
 
-1. Ir para **Keywords → Search Terms**.
-2. Selecionar período (30–90 dias).
-3. Colunas necessárias: `Search term`, `Clicks`, `Impressions`, `Cost`, `Conversions`, `CTR`, `Avg. CPC`.
-4. Export → CSV.
+1. Go to **Keywords -> Search Terms**.
+2. Select period: 30-90 days.
+3. Required columns: `Search term`, `Clicks`, `Impressions`, `Cost`, `Conversions`, `CTR`, `Avg. CPC`.
+4. Export -> CSV.
 
-### Rodar o script
+### Run the script
 
 ```bash
 python n_gram_analysis.py search_terms.csv
 ```
 
-Output: `ngram_report.csv` com 3 abas:
-- `1grams` — tokens únicos.
-- `2grams` — pares de palavras.
-- `3grams` — trios de palavras.
+Output: `ngram_report.csv` with 3 sheets/tables:
+- `1grams` - single tokens.
+- `2grams` - word pairs.
+- `3grams` - word trios.
 
-Cada aba ordenada por `Cost` descrescente, com colunas `Clicks`, `Conversions`, `CPA`, `CTR`.
+Each table is sorted by descending `Cost`, with columns `Clicks`, `Conversions`, `CPA`, `CTR`.
 
-### Interpretar resultados
+### Interpret results
 
-```
-1-gram: "free" | Cost: $85 | Conv: 0 → negative "free" (exact match)
-1-gram: "removal" | Cost: $420 | Conv: 15 → core keyword, mantém
+```text
+1-gram: "free" | Cost: $85 | Conv: 0 -> negative "free" (exact match)
+1-gram: "removal" | Cost: $420 | Conv: 15 -> core keyword, keep
 
-2-gram: "floor removal" | Cost: $220 | Conv: 12 → ótimo, promover para exact
-2-gram: "diy floor" | Cost: $45 | Conv: 0 → negative "diy" ou phrase "diy floor"
+2-gram: "floor removal" | Cost: $220 | Conv: 12 -> great, promote to exact
+2-gram: "diy floor" | Cost: $45 | Conv: 0 -> negative "diy" or phrase "diy floor"
 
-3-gram: "remove tile yourself" | Cost: $30 | Conv: 0 → negative phrase
-3-gram: "floor removal orlando" | Cost: $180 | Conv: 9 → EXACT MATCH NOW
+3-gram: "remove tile yourself" | Cost: $30 | Conv: 0 -> negative phrase
+3-gram: "floor removal orlando" | Cost: $180 | Conv: 9 -> EXACT MATCH NOW
 ```
 
 ---
 
-## 6. Looker Studio — template de dashboard
+## 6. Looker Studio - dashboard template
 
-Conexão: Google Ads Data Source → select account.
+Connection: Google Ads Data Source -> select account.
 
-### Páginas recomendadas
+### Recommended pages
 
-**Página 1 — Executive Summary**
+**Page 1 - Executive Summary**
 - Scorecards: Spend, Conversions, CPA, CTR, ROAS.
-- Time series: Conv + CPA últimos 90 dias.
-- Bar chart: Campaigns by Conversions (sorted).
+- Time series: Conv + CPA for last 90 days.
+- Bar chart: Campaigns by Conversions, sorted.
 
-**Página 2 — Keywords & Quality Score**
+**Page 2 - Keywords & Quality Score**
 - Table: Keyword, QS, Impr, Clicks, Cost, Conv, CPA.
-- Filter: QS slider (1–10).
-- Conditional formatting: QS ≤ 5 em vermelho.
+- Filter: QS slider from 1 to 10.
+- Conditional formatting: QS <= 5 in red.
 
-**Página 3 — Geo & Device**
+**Page 3 - Geo & Device**
 - Geo map: Conversions by county.
 - Table: Device, Conv, CPA, CTR.
 
-**Página 4 — Auction Insights**
+**Page 4 - Auction Insights**
 - Table: Competitor, IS, Overlap Rate, AbsTop Rate.
 - Trend: weekly comparison.
 
-**Página 5 — Search Terms**
+**Page 5 - Search Terms**
 - Table: Search term, Cost, Conv, CPA.
-- Filter: Conversions = 0 (para waste analysis).
+- Filter: Conversions = 0 for waste analysis.
 
-### Campos calculados úteis
+### Useful calculated fields
 
 ```sql
 -- ROAS
@@ -560,26 +560,26 @@ SUM(IF(conversions = 0, cost, 0)) / SUM(cost)
 
 ---
 
-## 7. Checklist de relatório mensal
+## 7. Monthly report checklist
 
-Antes de entregar qualquer relatório, validar:
+Before delivering any report, validate:
 
-- [ ] Período correto (data início e fim conferidos com a conta).
-- [ ] Conversões: contando **Primary only** (não mixed com Secondary).
-- [ ] CPA calculado em cima de Primary conversions.
-- [ ] Auction Insights com mesmo período do relatório.
-- [ ] Benchmark: comparar com mês anterior + mesmo mês do ano anterior (sazonalidade).
-- [ ] Anotações de eventos relevantes no período (lançamento de produto, mudança de landing, nova campanha).
-- [ ] Próximos passos são **específicos e acionáveis** ("pausar keyword X") não vagos ("monitorar performance").
+- [ ] Correct period: start and end dates checked against the account.
+- [ ] Conversions: counting **Primary only**, not mixed with Secondary.
+- [ ] CPA calculated from Primary conversions.
+- [ ] Auction Insights uses the same period as the report.
+- [ ] Benchmark: compare with previous month + same month last year for seasonality.
+- [ ] Relevant period notes: product launch, landing change, new campaign.
+- [ ] Next steps are **specific and actionable**, such as "pause keyword X", not vague like "monitor performance".
 
 ---
 
-## 8. Fontes (research 2026)
+## 8. Sources (2026 research)
 
-- [GAQL Overview — Google Ads API](https://developers.google.com/google-ads/api/docs/query/overview)
-- [GAQL Grammar — Google Ads API](https://developers.google.com/google-ads/api/docs/query/grammar)
-- [Google Ads Scripts 2026 — groas.ai](https://groas.ai/post/best-google-ads-scripts-2026-install-guide-automation-limits)
-- [Automate Reporting with AI — Cotera](https://cotera.co/articles/automate-google-ads-reporting-ai)
-- [Scripts Automation 2026 — Yeezypay](https://yeezypay.io/blog/google-ads-scripts-in-2026-how-to-automate-monitor)
-- [N-gram Analysis — Adalysis](https://adalysis.com/blog/n-gram-analysis-the-secret-to-scalable-search-term-management-in-google-ads/)
-- [Free Python N-gram Script — Ayima](https://www.ayima.com/insights/ngram-script-for-google-ads.html)
+- [GAQL Overview - Google Ads API](https://developers.google.com/google-ads/api/docs/query/overview)
+- [GAQL Grammar - Google Ads API](https://developers.google.com/google-ads/api/docs/query/grammar)
+- [Google Ads Scripts 2026 - groas.ai](https://groas.ai/post/best-google-ads-scripts-2026-install-guide-automation-limits)
+- [Automate Reporting with AI - Cotera](https://cotera.co/articles/automate-google-ads-reporting-ai)
+- [Scripts Automation 2026 - Yeezypay](https://yeezypay.io/blog/google-ads-scripts-in-2026-how-to-automate-monitor)
+- [N-gram Analysis - Adalysis](https://adalysis.com/blog/n-gram-analysis-the-secret-to-scalable-search-term-management-in-google-ads/)
+- [Free Python N-gram Script - Ayima](https://www.ayima.com/insights/ngram-script-for-google-ads.html)

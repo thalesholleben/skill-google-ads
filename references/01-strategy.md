@@ -1,210 +1,210 @@
-# 01 — Estratégia (Smart Bidding, AI Max, Attribution, Audiences)
+# 01 - Strategy (Smart Bidding, AI Max, Attribution, Audiences)
 
-> Carregue este arquivo quando o usuário perguntar sobre estratégia de lance, AI Max, attribution, audiências, sazonalidade ou tomada de decisão de alto nível.
+> Load this file when the user asks about bidding strategy, AI Max, attribution, audiences, seasonality, or high-level decision making.
 
 ---
 
-## 1. Smart Bidding em 2026 — o que mudou
+## 1. Smart Bidding in 2026 - what changed
 
-### O grande shift: tROAS virou o default preferido (quando há valor)
+### The major shift: tROAS became the preferred default when value exists
 
-Para contas com valor de conversão rastreável, **tROAS** é a escolha em 2026. O Google passou a otimizar por valor, não só por volume — o algoritmo prioriza conversões de US$ 200 sobre 10 conversões de US$ 20. Sem valor de conversão, você está deixando isso na mesa.
+For accounts with trackable conversion value, **tROAS** is the best default in 2026. Google optimizes for value, not only volume - the algorithm prioritizes a $200 conversion over ten $20 conversions. Without conversion value, you leave this advantage on the table.
 
-| Estratégia | Quando usar | Volume mínimo | Riscos |
+| Strategy | When to use | Minimum volume | Risks |
 |---|---|---|---|
-| **Maximize Conversions** | Saída do learning phase, contas novas, fase de coleta de dados | Qualquer | Sem teto de CPA — pode escalar gastos sem controle |
-| **Maximize Conversions + tCPA cap** | Transição entre Max Conv e tCPA puro | 10–25 conv/mês | Caps muito agressivos limitam volume |
-| **Target CPA (tCPA)** | Lead gen, custo conhecido, foco em eficiência | 30+ conv/30d (oficial: 50) | Pode reduzir volume; sensível a mudanças >20% |
-| **Target ROAS (tROAS)** | E-commerce, lead gen com valor por lead | 50+ conv/30d **+ valor** | Sem valor confiável é pior que tCPA |
-| **Maximize Clicks** | Awareness, awareness/discovery, sites institucionais | Qualquer | Não otimiza para conversão |
-| **Manual CPC** | Casos muito específicos (compliance, testes) | Qualquer | Esforço alto, perdendo todos os sinais que Smart Bidding lê |
+| **Maximize Conversions** | Leaving the learning phase, new accounts, data collection | Any | No CPA ceiling - can scale spend without control |
+| **Maximize Conversions + tCPA cap** | Transition between Max Conv and pure tCPA | 10-25 conv/month | Aggressive caps limit volume |
+| **Target CPA (tCPA)** | Lead gen, known cost, efficiency focus | 30+ conv/30d (official: 50) | Can reduce volume; sensitive to >20% changes |
+| **Target ROAS (tROAS)** | E-commerce, lead gen with lead value | 50+ conv/30d **+ value** | Worse than tCPA if value is unreliable |
+| **Maximize Clicks** | Awareness, discovery, informational sites | Any | Does not optimize for conversions |
+| **Manual CPC** | Very specific cases: compliance, tests | Any | High effort, losing all signals Smart Bidding reads |
 
-### Novidades 2026 dignas de nota
+### Notable 2026 changes
 
-- **Cart Value Optimization** (e-commerce): se o usuário adiciona produtos ao carrinho, o lance é ajustado pelo valor do carrinho em real-time. Habilitar via Merchant Center.
-- **Profit Margin Bidding**: você sobe margem por SKU para o Merchant Center; Smart Bidding prioriza alto-margem sobre alto-revenue. **Mata o vício de "ROAS lindo, lucro zero"**.
-- **Seasonality Adjustments**: avise o algoritmo sobre eventos previsíveis (Black Friday, lançamento, feira). Sem isso, ele super-reage à anomalia. Use para janelas de 1–14 dias com mudança de CR esperada >10%.
+- **Cart Value Optimization** for e-commerce: when a user adds products to the cart, bids are adjusted by cart value in real time. Enable through Merchant Center.
+- **Profit Margin Bidding**: upload margin by SKU to Merchant Center; Smart Bidding prioritizes high-margin over high-revenue. This kills the "beautiful ROAS, zero profit" trap.
+- **Seasonality Adjustments**: warn the algorithm about predictable events such as Black Friday, launches, or trade shows. Without this, it overreacts to anomalies. Use for 1-14 day windows with expected CR change above 10%.
 
-### Regras de ouro do learning phase
+### Learning phase golden rules
 
-O learning phase **dura 7–14 dias** e reseta quando você:
+The learning phase lasts **7-14 days** and resets when you:
 
-- Muda a estratégia de lance.
-- Muda o tCPA/tROAS target em **mais de 20%**.
-- Muda o budget em **mais de 20%**.
-- Adiciona/remove keywords ou ad groups significativos.
-- Pausa e reativa a campanha.
+- Change the bidding strategy.
+- Change the tCPA/tROAS target by **more than 20%**.
+- Change the budget by **more than 20%**.
+- Add or remove significant keywords or ad groups.
+- Pause and reactivate the campaign.
 
-**Implicações práticas:**
-- Não toque em targets toda semana. Espere 14 dias antes de avaliar.
-- Se precisa cortar CPA em 30%, faça em **dois passos** de 15% com 14 dias entre eles.
-- Não copie/duplica campanhas para "reset" sem motivo — você joga fora 100% do aprendizado.
+**Practical implications:**
+- Do not touch targets every week. Wait 14 days before evaluating.
+- If you need to cut CPA by 30%, do it in **two 15% steps** with 14 days between them.
+- Do not copy or duplicate campaigns to "reset" without a strong reason - you throw away 100% of the learning.
 
 ### Setting realistic targets
 
-- **Initial tCPA**: defina **igual ou 10–20% acima do CPA atual médio**. Se o seu CPA atual é US$ 50, comece em US$ 55.
-- **Initial tROAS**: defina **abaixo do ROAS atual** (90% dele) para o algoritmo ter folga e otimizar volume primeiro.
-- **Ramp**: reduza tCPA (ou suba tROAS) em **10–15% a cada 2 semanas**, sempre confirmando que volume não despencou.
-- **Floor**: nunca defina tCPA tão baixo que o algoritmo pause delivery — ele vai parar de gastar antes de aceitar a conv.
+- **Initial tCPA**: set it **equal to or 10-20% above current average CPA**. If current CPA is $50, start at $55.
+- **Initial tROAS**: set it **below current ROAS** (90% of it) so the algorithm has room to optimize volume first.
+- **Ramp**: reduce tCPA or increase tROAS by **10-15% every 2 weeks**, always confirming volume did not collapse.
+- **Floor**: never set tCPA so low that the algorithm stops delivery - it will stop spending before accepting conversions.
 
 ---
 
-## 2. AI Max for Search — guia de migração 2026
+## 2. AI Max for Search - 2026 migration guide
 
-### O que é
+### What it is
 
-AI Max **não é uma campanha nova** — é um conjunto de 3 features ativáveis dentro de campanhas Search existentes:
+AI Max **is not a new campaign type**. It is a set of 3 features that can be enabled inside existing Search campaigns:
 
-1. **Search Term Matching**: expansão broad-match-like + "keywordless targeting" — Google encontra queries relevantes que você não cobriu.
-2. **Text Customization**: AI gera copy adicional puxando do site e dos assets que você já forneceu.
-3. **Final URL Expansion**: roteia automaticamente para a melhor landing page do site.
+1. **Search Term Matching**: broad-match-like expansion plus "keywordless targeting" - Google finds relevant queries you did not cover.
+2. **Text Customization**: AI generates additional copy from the website and the assets already provided.
+3. **Final URL Expansion**: automatically routes users to the best landing page on the site.
 
-### Cronograma forçado
+### Forced timeline
 
-A partir de **setembro/2026**, Google **migra automaticamente** todas as Dynamic Search Ads (DSA), Automatically Created Assets (ACA) e broad match para o framework AI Max. Quem ainda não migrou vai ser migrado.
+Starting in **September 2026**, Google **automatically migrates** all Dynamic Search Ads (DSA), Automatically Created Assets (ACA), and broad match into the AI Max framework. Accounts that have not migrated will be migrated.
 
-### Performance esperada (oficial Google)
+### Expected performance (official Google)
 
-- +14% conversões / valor a CPA similar — caso geral.
-- +27% — em campanhas que ainda dependem majoritariamente de exact + phrase.
+- +14% conversions or value at similar CPA in the general case.
+- +27% in campaigns that still rely mostly on exact + phrase.
 
-### Quando ativar agora vs esperar
+### When to enable now vs wait
 
-**Ative agora se:**
-- Tracking sólido (Enhanced Conversions ON, ≥30 conv/mês, valor por conv configurado).
-- Site bem estruturado (landing pages dedicadas, conteúdo limpo).
-- Você tem capacidade de monitorar search terms semanalmente.
-- Já roda broad match com Smart Bidding sem desastre.
+**Enable now if:**
+- Tracking is solid: Enhanced Conversions ON, 30+ conv/month, conversion value configured.
+- The site is well structured: dedicated landing pages, clean content.
+- You can review search terms weekly.
+- You already run broad match with Smart Bidding without major waste.
 
-**Espere se:**
-- Tracking ruim ou incerto.
-- Site genérico/B2B com landing única.
-- Vertical sensível (legal, financeiro, saúde) onde texto AI-gerado pode causar problema.
-- Você não consegue revisar search terms e final URLs com cadência.
+**Wait if:**
+- Tracking is poor or uncertain.
+- The site is generic or B2B with a single landing page.
+- The vertical is sensitive: legal, finance, healthcare, where AI-generated text can create issues.
+- You cannot review search terms and final URLs on a cadence.
 
-### Controles obrigatórios após ativar AI Max
+### Mandatory controls after enabling AI Max
 
-- **Brand exclusion lists**: bloqueie marcas de competidor que você NÃO quer aparecer.
-- **Locations of interest**: especifique geografia onde vale ad-show, mesmo que o user esteja fora.
-- **Negative keywords**: reforce, não relaxe. AI Max expande mais que broad clássico.
-- **Final URL inclusions/exclusions**: defina padrões de URL elegíveis vs não.
+- **Brand exclusion lists**: block competitor brands where you do NOT want to appear.
+- **Locations of interest**: specify geographies where an ad show is valuable, even if the user is outside the area.
+- **Negative keywords**: strengthen them, do not loosen them. AI Max expands more than classic broad.
+- **Final URL inclusions/exclusions**: define eligible and ineligible URL patterns.
 
 ---
 
-## 3. Attribution em 2026 — Data-Driven Attribution (DDA)
+## 3. Attribution in 2026 - Data-Driven Attribution (DDA)
 
-### Estado atual
+### Current state
 
-Apenas **2 modelos sobrevivem**: Last Click e Data-Driven Attribution. First click, linear, time-decay, position-based foram aposentados.
+Only **2 models survive**: Last Click and Data-Driven Attribution. First click, linear, time-decay, and position-based models were retired.
 
-**DDA é o default para todas as novas conversion actions.** Não há mais mínimo de dados para usar DDA, mas o Google recomenda **200+ conv + 2.000+ ad interactions/30d** para ele performar bem.
+**DDA is the default for all new conversion actions.** There is no longer a data minimum to use DDA, but Google recommends **200+ conversions + 2,000+ ad interactions in 30 days** for it to perform well.
 
-### Como DDA funciona
+### How DDA works
 
-Machine learning compara paths de usuários que converteram com paths de quem não converteu. Identifica quais touchpoints "fizeram a diferença". Distribui crédito **fracionado** entre todas as interações com ads na jornada.
+Machine learning compares paths from users who converted against paths from users who did not. It identifies which touchpoints made the difference and distributes **fractional credit** across all ad interactions in the journey.
 
-### Por que importa para Smart Bidding
+### Why it matters for Smart Bidding
 
-Smart Bidding **lê crédito de DDA** para decidir lances. Se você está em Last Click, você está dizendo ao algoritmo "só conta o último clique" — ele não consegue valorizar awareness/middle-funnel campaigns adequadamente. **Migre para DDA antes de qualquer otimização séria de Smart Bidding.**
+Smart Bidding **reads DDA credit** to decide bids. If you are on Last Click, you are telling the algorithm "only the final click counts" - it cannot properly value awareness or middle-funnel campaigns. **Move to DDA before any serious Smart Bidding optimization.**
 
-### Enhanced Conversions — não opcional em 2026
+### Enhanced Conversions - not optional in 2026
 
-Enhanced Conversions envia dados hashed (email, telefone) do usuário para casar com a conta Google dele. Recupera **20–40% das conversões perdidas** com cookies/iOS restrictions.
+Enhanced Conversions sends hashed user data such as email or phone to match with the user's Google account. It recovers **20-40% of conversions lost** to cookies and iOS restrictions.
 
-**Tipos:**
-- **Enhanced Conversions for Web**: e-commerce e form-fills.
-- **Enhanced Conversions for Leads**: B2B / lead gen, casa o lead com a conv quando ele fecha (offline).
+**Types:**
+- **Enhanced Conversions for Web**: e-commerce and form fills.
+- **Enhanced Conversions for Leads**: B2B and lead gen, matching the lead to the conversion when it closes offline.
 
-**Mudança junho/2026**: Enhanced Conversions for Web e for Leads serão **unificadas em um único toggle**. Sem mais "que método uso?".
+**June 2026 change**: Enhanced Conversions for Web and for Leads will be **unified into a single toggle**. No more "which method should I use?".
 
-### Offline Conversion Import (OCI) para lead gen
+### Offline Conversion Import (OCI) for lead gen
 
-O fluxo:
-1. Lead clica → GCLID gravado no formulário (hidden field).
-2. CRM grava GCLID + email hashed junto do lead.
-3. Quando o lead fecha (sale, qualificação), CRM envia evento de volta para Google Ads via API ou upload.
-4. Smart Bidding aprende: "leads desse perfil de search/keyword fecham mais".
+The flow:
+1. Lead clicks -> GCLID is saved in the form as a hidden field.
+2. CRM stores GCLID + hashed email with the lead.
+3. When the lead closes, qualifies, or sells, the CRM sends the event back to Google Ads through API or upload.
+4. Smart Bidding learns: "leads from this search/keyword profile close more often."
 
-**Sem OCI, você está otimizando para volume de leads, não qualidade.** Se 30% dos leads viram cliente e 70% são lixo, Smart Bidding não sabe disso e otimiza para média.
+**Without OCI, you optimize for lead volume, not lead quality.** If 30% of leads become customers and 70% are junk, Smart Bidding does not know that and optimizes for the average.
 
 ### Consent Mode v2
 
-Em mercados com GDPR/LGPD: implementar Consent Mode v2 para que sinais de conversão de usuários que rejeitaram cookies ainda alimentem modelagem (não rastreamento individual).
+In GDPR/LGPD markets: implement Consent Mode v2 so conversion signals from users who rejected cookies still feed modeling, not individual tracking.
 
 ---
 
 ## 4. Audience Targeting 2026
 
-### Hierarquia de audiences (ordem de impacto)
+### Audience hierarchy by impact
 
-1. **Customer Match (1P data)** — sua lista de clientes, leads qualificados, churn. Casos de uso:
-   - Excluir clientes atuais de prospecting.
-   - Listar lookalike (Demand Gen).
-   - Audience signal em PMax.
-2. **Your Data Segments (ex-remarketing)** — visitantes do site, App users, video viewers.
-3. **Custom Segments** — keywords de competidor + URLs de competidor + apps.
-4. **In-Market** — Google identifica usuários ativamente pesquisando categoria.
-5. **Affinity** — interesses gerais (top of funnel).
-6. **Detailed Demographics** — idade, paternidade, educação, employment.
+1. **Customer Match (1P data)** - your list of customers, qualified leads, churned users. Use cases:
+   - Exclude current customers from prospecting.
+   - Build lookalike audiences for Demand Gen.
+   - Use as an audience signal in PMax.
+2. **Your Data Segments (formerly remarketing)** - site visitors, app users, video viewers.
+3. **Custom Segments** - competitor keywords, competitor URLs, apps.
+4. **In-Market** - Google identifies users actively researching the category.
+5. **Affinity** - broad interests for top-of-funnel.
+6. **Detailed Demographics** - age, parenthood, education, employment.
 
-### O que mudou em 2026
+### What changed in 2026
 
-- **API change crítica (1 abril 2026)**: Customer Match uploads via Google Ads API param de funcionar para developers que ainda não usam. Migrar para **Data Manager API**.
-- **Lookalike**: agora exclusivo de **Demand Gen campaigns**. Mín 1.000 active matched users na seed.
-- **"Your data segments"**: novo nome para listas de remarketing — reflete que esses dados alimentam Smart Bidding e PMax, não só retargeting.
+- **Critical API change (April 1, 2026)**: Customer Match uploads through the Google Ads API stop working for developers who are not already using it. Migrate to the **Data Manager API**.
+- **Lookalike**: now exclusive to **Demand Gen campaigns**. Minimum 1,000 active matched users in the seed list.
+- **"Your data segments"**: the new name for remarketing lists - reflecting that these data feed Smart Bidding and PMax, not only retargeting.
 
-### Audience Strategy por funnel stage
+### Audience strategy by funnel stage
 
-| Stage | Audience | Campanha |
+| Stage | Audience | Campaign |
 |---|---|---|
-| **Aware** | Affinity, Custom intent (URLs de blog/educational) | Display, Demand Gen |
-| **Interest** | In-Market, Custom segments (competidor) | Search broad + Display |
-| **Consideration** | Site visitors, video 75% viewers | Search exact/phrase + RLSA |
-| **Decision** | Cart abandoners, pricing page visitors | RLSA aggressive bid + Shopping |
-| **Customer** | Customer Match (excluir de aquisição, incluir em retention) | RLSA upsell, email match Display |
+| **Aware** | Affinity, custom intent from blog/educational URLs | Display, Demand Gen |
+| **Interest** | In-Market, competitor Custom Segments | Search broad + Display |
+| **Consideration** | Site visitors, 75% video viewers | Search exact/phrase + RLSA |
+| **Decision** | Cart abandoners, pricing page visitors | Aggressive RLSA bid + Shopping |
+| **Customer** | Customer Match: exclude from acquisition, include in retention | RLSA upsell, email match Display |
 
-### Audience signals em PMax
+### Audience signals in PMax
 
-PMax aceita "audience signals" — você dá pista do alvo, ele expande. O signal **não trava** o targeting; é input para o algoritmo. Componentes:
+PMax accepts "audience signals" - you give the algorithm a hint, and it expands. The signal **does not lock targeting**; it is an input to the algorithm. Components:
 
-1. **Customer Match**: top 10% LTV.
-2. **Your Data**: visitantes que viram página de pricing.
-3. **Custom Segments**: pessoas pesquisando competidor.
-4. **Demographics**: faixa etária/income que historicamente converte.
+1. **Customer Match**: top 10% LTV customers.
+2. **Your Data**: visitors who viewed pricing.
+3. **Custom Segments**: people searching for competitors.
+4. **Demographics**: age/income ranges that historically convert.
 
 ### RLSA (Remarketing Lists for Search Ads)
 
-Permite **mudar bids/copy** quando alguém na sua lista pesquisa termo genérico. Exemplo: visitante voltou e busca "best CRM" — você pode subir +50% e mostrar "Welcome back, ready to start?". Em campanhas com Smart Bidding, **as listas viram sinal automático** (não precisa setar bid adjustment).
+RLSA lets you **change bids or copy** when someone in your list searches a generic term. Example: a returning visitor searches "best CRM" - you can bid +50% and show "Welcome back, ready to start?". In Smart Bidding campaigns, **lists become automatic signals** and do not require manual bid adjustments.
 
 ---
 
-## 5. Quando reestruturar a estratégia
+## 5. When to restructure strategy
 
-Sintomas de que **está na hora de mudar de fase estratégica**:
+Symptoms that it is **time to move to the next strategic phase**:
 
-| Sintoma | Próximo passo estratégico |
+| Symptom | Next strategic step |
 |---|---|
-| Atinge meta de CPA mas volume estagnado por 2+ meses | Considerar tROAS (com valor) ou subir tCPA gradualmente |
-| ROAS bate target mas lucro líquido estagnado | Migrar para Profit Margin bidding |
-| Branded search cresceu organicamente | Adicionar campanha de Brand defense (ROI altíssimo) |
-| Concorrente pesado entrou no leilão (Auction Insights) | Defender Brand + investir em diferenciação na copy |
-| Search saturou (IS > 80%, custo subindo) | Expandir para PMax, Demand Gen, Display |
-| Lead gen com 30% lead-to-customer conhecido | Implementar OCI para otimização por qualidade |
-| Diversos verticais/produtos no mesmo conjunto | Quebrar em accounts/campaigns separadas para Smart Bidding aprender melhor |
+| CPA target is reached but volume has been flat for 2+ months | Consider tROAS with value or gradually increase tCPA |
+| ROAS hits target but net profit is flat | Migrate to Profit Margin Bidding |
+| Branded search grew organically | Add a Brand defense campaign with very high ROI |
+| A strong competitor entered the auction | Defend Brand + invest in copy differentiation |
+| Search saturated: IS > 80%, cost rising | Expand into PMax, Demand Gen, Display |
+| Lead gen has known 30% lead-to-customer rate | Implement OCI to optimize for quality |
+| Multiple verticals/products share the same structure | Split into separate accounts/campaigns so Smart Bidding can learn cleaner patterns |
 
 ---
 
-## 6. Fontes (research 2026)
+## 6. Sources (2026 research)
 
-- [Smart Bidding 2026 — groas.ai](https://groas.ai/post/google-ads-smart-bidding-strategy-guide-2026-target-cpa-vs-target-roas)
-- [Value Based Bidding 2026 — Brainmine](https://www.brainminetech.com/blog/how-value-based-bidding-is-changing-the-way-google-ads-scales-profit-in-2026/)
-- [About Target ROAS — Google Ads Help](https://support.google.com/google-ads/answer/6268637)
-- [AI Max for Search Campaigns — Google Ads Help](https://support.google.com/google-ads/answer/15910187)
-- [DSA upgrading to AI Max — Google Blog](https://blog.google/products/ads-commerce/dsa-upgrade-to-ai-max-2026/)
-- [AI Max Migration Guide — Vizup](https://www.tryvizup.com/blog/replace-dynamic-search-ads-with-ai-max-your-2026-migration-guide)
-- [Attribution Modeling 2026 — ALM Corp](https://almcorp.com/blog/attribution-modeling-google-ads/)
-- [Future of attribution is data-driven — Google Blog](https://blog.google/products/ads-commerce/data-driven-attribution-new-default/)
-- [Customer Match — Google Ads Help](https://support.google.com/google-ads/answer/6379332)
-- [Customer Match API change April 2026 — ALM Corp](https://almcorp.com/blog/google-ads-api-customer-match-disabled-april-2026/)
-- [Audience Targeting 2026 — AdNabu](https://blog.adnabu.com/google-ads/google-ads-audience-targeting/)
-- [Enhanced Conversions for Leads — Google Ads Help](https://support.google.com/google-ads/answer/15713840)
+- [Smart Bidding 2026 - groas.ai](https://groas.ai/post/google-ads-smart-bidding-strategy-guide-2026-target-cpa-vs-target-roas)
+- [Value Based Bidding 2026 - Brainmine](https://www.brainminetech.com/blog/how-value-based-bidding-is-changing-the-way-google-ads-scales-profit-in-2026/)
+- [About Target ROAS - Google Ads Help](https://support.google.com/google-ads/answer/6268637)
+- [AI Max for Search Campaigns - Google Ads Help](https://support.google.com/google-ads/answer/15910187)
+- [DSA upgrading to AI Max - Google Blog](https://blog.google/products/ads-commerce/dsa-upgrade-to-ai-max-2026/)
+- [AI Max Migration Guide - Vizup](https://www.tryvizup.com/blog/replace-dynamic-search-ads-with-ai-max-your-2026-migration-guide)
+- [Attribution Modeling 2026 - ALM Corp](https://almcorp.com/blog/attribution-modeling-google-ads/)
+- [Future of attribution is data-driven - Google Blog](https://blog.google/products/ads-commerce/data-driven-attribution-new-default/)
+- [Customer Match - Google Ads Help](https://support.google.com/google-ads/answer/6379332)
+- [Customer Match API change April 2026 - ALM Corp](https://almcorp.com/blog/google-ads-api-customer-match-disabled-april-2026/)
+- [Audience Targeting 2026 - AdNabu](https://blog.adnabu.com/google-ads/google-ads-audience-targeting/)
+- [Enhanced Conversions for Leads - Google Ads Help](https://support.google.com/google-ads/answer/15713840)

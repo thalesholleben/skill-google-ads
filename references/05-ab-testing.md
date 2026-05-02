@@ -1,345 +1,348 @@
-# 05 — A/B Testing (Drafts & Experiments) em 2026
+# 05 - A/B Testing (Drafts & Experiments) in 2026
 
-> Carregue este arquivo quando o usuário perguntar sobre testes, experiments, A/B, statistical significance, comparação de copy/lance/landing.
-
----
-
-## 1. Quando usar Drafts & Experiments vs alternativas
-
-### Drafts & Experiments (in-platform)
-
-**Use quando** quer testar:
-- Bid strategy (Maximize Conversions vs tCPA, tCPA vs tROAS).
-- Bid target (tCPA US$ 40 vs US$ 50).
-- Ad copy estrutural (mudança radical).
-- Landing page (URL final diferente).
-- Inclusão de search themes em PMax.
-- Mudança de match types em larga escala.
-- Audience signals em PMax.
-
-**Vantagens:**
-- Statistical significance automático (Jackknife resampling, 95% confidence).
-- Split de tráfego aleatório (não viesado por hora/dia).
-- Native attribution (mesma que Smart Bidding usa).
-- Não precisa de ferramenta externa.
-
-**Limitações:**
-- Não comparam métricas de receita externa (precisa Google Analytics/CRM).
-- Mínimo de 3–8 semanas para resultados confiáveis.
-- Não funcionam em todas as campaign types (PMax tem suas próprias mecânicas).
-
-### Alternativas
-
-**Para landing pages**: Google Optimize foi descontinuado. Use **VWO, Optimizely, AB Tasty, Convert** ou bridge via **GA4 BigQuery + custom test**.
-
-**Para creative em PMax**: usar Asset Reporting + remover/adicionar assets manualmente (não há experiment formal).
-
-**Para mudanças "low-risk"**: aplicar diretamente, monitorar 14d, reverter se piora. Adequado para mudanças de extensions, adicionar negatives, ajustar lances < 20%.
+> Load this file when the user asks about testing, experiments, A/B tests, statistical significance, or comparisons of copy, bidding, or landing pages.
 
 ---
 
-## 2. Como rodar um experiment no Google Ads
+## 1. When to use Drafts & Experiments vs alternatives
 
-### Setup passo-a-passo
+### Drafts & Experiments in-platform
 
-#### 1. Criar Draft
-- Em Campanhas → Drafts & Experiments → Drafts → New.
-- Selecionar campanha base (a "control").
-- Aplicar **uma única mudança** (regra 1 variável).
+**Use when** you want to test:
+- Bid strategy: Maximize Conversions vs tCPA, tCPA vs tROAS.
+- Bid target: tCPA $40 vs $50.
+- Structural ad copy changes.
+- Landing page with a different final URL.
+- Search theme inclusion in PMax.
+- Match type changes at scale.
+- Audience signals in PMax.
 
-#### 2. Convert para Experiment
-- Em Drafts → Apply → Run as experiment.
-- Configurar:
-  - **Nome**: descritivo (ex: "Test_tCPA_50_vs_60_2026Q2").
-  - **Datas**: data de início + data de fim. Mín 3 semanas, ideal 6 semanas.
-  - **Traffic split**: 50/50 padrão. Para teste arriscado: 30 (variation) / 70 (control).
-  - **Search-based vs Cookie-based split**: cookie-based é o default, mais limpo.
+**Advantages:**
+- Automatic statistical significance: Jackknife resampling, 95% confidence.
+- Random traffic split, not biased by hour/day.
+- Native attribution, same as Smart Bidding uses.
+- No external tool required.
+
+**Limitations:**
+- Does not compare external revenue metrics without Google Analytics/CRM.
+- Requires at least 3-8 weeks for reliable results.
+- Does not work on every campaign type; PMax has its own mechanics.
+
+### Alternatives
+
+**For landing pages**: Google Optimize was discontinued. Use **VWO, Optimizely, AB Tasty, Convert**, or bridge through **GA4 BigQuery + custom test**.
+
+**For PMax creative**: use Asset Reporting and manually remove/add assets; there is no formal creative experiment.
+
+**For low-risk changes**: apply directly, monitor for 14 days, roll back if worse. Suitable for extension changes, adding negatives, and bid target adjustments under 20%.
+
+---
+
+## 2. How to run an experiment in Google Ads
+
+### Step-by-step setup
+
+#### 1. Create Draft
+- Go to Campaigns -> Drafts & Experiments -> Drafts -> New.
+- Select the base campaign, the control.
+- Apply **one single change**, following the one-variable rule.
+
+#### 2. Convert to Experiment
+- Drafts -> Apply -> Run as experiment.
+- Configure:
+  - **Name**: descriptive, for example "Test_tCPA_50_vs_60_2026Q2".
+  - **Dates**: start date + end date. Minimum 3 weeks, ideal 6 weeks.
+  - **Traffic split**: default 50/50. Risky test: 30 variation / 70 control.
+  - **Search-based vs Cookie-based split**: cookie-based is default and cleaner.
 
 #### 3. Goal metric
-Defina **a métrica principal** que decide o teste:
+
+Define **the primary metric** that decides the test:
 - Lead gen: **Cost per conversion**.
-- E-commerce com valor: **ROAS** ou **conversion value**.
-- Awareness: **CTR** ou **CPM**.
+- E-commerce with value: **ROAS** or **conversion value**.
+- Awareness: **CTR** or **CPM**.
 
-### Sample size mínimo (regra de bolso)
+### Minimum sample size rule of thumb
 
-Para detectar diferença com 95% de confiança:
+To detect a difference with 95% confidence:
 
-| Lift relativo a detectar | Conversões/variant necessárias |
-|---|---|
+| Relative lift to detect | Conversions needed per variant |
+|---|---:|
 | 50% | ~100 |
 | 30% | ~250 |
 | 20% | ~400 |
-| 10% | ~1.500 |
+| 10% | ~1,500 |
 
-Se sua campanha total faz 100 conv/mês, você consegue detectar ~30% lift em ~5 semanas (250 / 50 = 5 semanas).
+If the campaign produces 100 conversions/month total, you can detect about a 30% lift in about 5 weeks: 250 / 50 = 5 weeks.
 
-### Duração mínima
+### Minimum duration
 
-- **Mínimo**: 3 semanas (cobre variação semanal).
-- **Recomendado**: 4–6 semanas (cobre eventos sazonais quinzenais).
-- **Para tROAS / valor**: 6–8 semanas (variação maior).
+- **Minimum**: 3 weeks, covering weekly variation.
+- **Recommended**: 4-6 weeks, covering biweekly seasonal events.
+- **For tROAS / value**: 6-8 weeks because variance is higher.
 
-**Não pare antes do prazo** mesmo se um lado está "vencendo". Variação aleatória pode reverter.
+**Do not stop early** even if one side is "winning". Random variation can reverse.
 
 ---
 
-## 3. O que testar (priorização por impacto)
+## 3. What to test, prioritized by impact
 
-### Tier 1 — Alto impacto, baixo esforço
-1. **Ad copy radical** (RSA nova com angle diferente).
-2. **Landing page com message match forte vs genérica**.
-3. **Add Enhanced Conversions** (aplicar mudança e medir lift de conv attribuída).
-4. **tCPA + 20% para liberar volume** (em campanha capeada por target).
+### Tier 1 - High impact, low effort
+1. **Radical ad copy**: new RSA with a different angle.
+2. **Landing page with strong message match vs generic**.
+3. **Add Enhanced Conversions**: apply change and measure attributed conversion lift.
+4. **tCPA +20% to unlock volume** in a campaign capped by target.
 
-### Tier 2 — Alto impacto, médio esforço
-5. **Mudança de bid strategy** (Max Conv → tCPA).
-6. **Match type expansion** (adicionar broad em campanha exact-only).
-7. **Split de campanha por geo** (1 campanha → 2 com targets diferentes).
-8. **PMax + audience signals novos**.
+### Tier 2 - High impact, medium effort
+5. **Bid strategy change**: Max Conv -> tCPA.
+6. **Match type expansion**: add broad to exact-only campaign.
+7. **Geo campaign split**: 1 campaign -> 2 with different targets.
+8. **PMax + new audience signals**.
 
-### Tier 3 — Validação
-9. **Pinning vs sem pinning**.
+### Tier 3 - Validation
+9. **Pinning vs no pinning**.
 10. **Search Partners ON vs OFF**.
-11. **Mais sitelinks (6 vs 8)**.
-12. **Description longas vs curtas**.
+11. **More sitelinks: 6 vs 8**.
+12. **Long descriptions vs short descriptions**.
 
-### Tier 4 — Baixo impacto, evitar testar
-13. Cor do botão.
-14. Word-level changes em headlines.
-15. Schedule fino-tunning em campanha tCPA (ignorado).
+### Tier 4 - Low impact, avoid testing
+13. Button color.
+14. Word-level headline changes.
+15. Fine-tuned schedule in tCPA campaign, because it is ignored.
 
 ---
 
-## 4. Anatomia de um teste bem desenhado
+## 4. Anatomy of a well-designed test
 
-### Hipótese clara
+### Clear hypothesis
 
-❌ "Quero testar uma copy nova."
-✅ "Hipótese: substituir 'Save Time' por 'Save 10+ Hours/Week' em 3 headlines aumentará CTR ≥10% em 4 semanas. Razão: especificidade aumenta credibilidade (referência: copy testing literature)."
+Bad: "I want to test new copy."
 
-### Métrica primária + guard-rails
+Good: "Hypothesis: replacing 'Save Time' with 'Save 10+ Hours/Week' in 3 headlines will increase CTR by at least 10% in 4 weeks. Rationale: specificity increases credibility."
 
-**Primária**: CTR.
-**Guard-rails** (não podem piorar significativamente):
-- Conversion rate (≥-5% tolerância).
-- CPA (≥+10% tolerância).
-- Quality Score médio (não cair).
+### Primary metric + guardrails
 
-Se primária subiu mas guard-rail estourou, **rejeite o teste**.
+**Primary**: CTR.
 
-### Critério de decisão pré-registrado
+**Guardrails** that cannot significantly worsen:
+- Conversion rate: tolerance >= -5%.
+- CPA: tolerance <= +10%.
+- Average Quality Score: should not fall.
 
-Antes de iniciar, escreva:
+If the primary metric improves but a guardrail breaks, **reject the test**.
 
-```
-Vencedor se:
+### Pre-registered decision criteria
+
+Before starting, write:
+
+```text
+Winner if:
   - Primary metric difference > X with p < 0.05
-  - All guard-rails dentro de tolerância
+  - All guardrails within tolerance
 
-Inconclusivo se:
+Inconclusive if:
   - p > 0.05
   - Sample size < 250 conv/variant
 
-Rollback se:
-  - Guard-rail estourou
-  - p < 0.05 mas em direção oposta à hipótese
+Rollback if:
+  - Guardrail breaks
+  - p < 0.05 but in the opposite direction of the hypothesis
 ```
 
 ### Single-variable rule
 
-**Mude UMA coisa por experimento.** Multi-variant testing é tentador mas:
-- Confunde causalidade.
-- Multiplica sample size requerido.
-- Em Google Ads, simplesmente não é suportado por Drafts & Experiments.
+**Change ONE thing per experiment.** Multi-variate testing is tempting but:
+- Confuses causality.
+- Multiplies required sample size.
+- In Google Ads, it is simply not supported by Drafts & Experiments.
 
-Exceção: testes mutually-exclusive (ex: 4 RSAs novas em rotação) não são "1 mudança", mas é teste de creative que naturalmente compara entre si.
-
----
-
-## 5. Errors clássicos em A/B testing de Google Ads
-
-### 1. "Pausei depois de 1 semana porque ficou claro que A é melhor"
-
-Variação aleatória pode dar diferença de 30% em 7 dias e zerar em 21 dias. **Sempre cumpra a duração planejada.**
-
-### 2. "Mudei a copy DURANTE o experiment"
-
-Rebenta o teste. Se precisa mudar (ex: erro tipográfico), pause o experiment e reinicie com sample fresh.
-
-### 3. "Comparei semana com semana sem rodar experiment formal"
-
-Sazonalidade, tendência, eventos externos. Você não tem "controle". A semana 1 não é o controle da semana 2 — são dois cenários diferentes, ambos rodaram em condições diferentes.
-
-### 4. "Aplicado mudança em todas as campanhas ao mesmo tempo"
-
-Você não tem mais um controle. Faça em **1 campanha primeiro** com experiment formal, depois rolouts.
-
-### 5. "Significância estatística significa que vou ganhar 30%"
-
-Significância confirma que a diferença é real, não que será 30% em escala. Lift observado em test pequeno tende a ser **inflated** (regression to the mean).
-
-### 6. "Test foi inconclusivo, vou aplicar a variação mesmo assim"
-
-Se você "vai aplicar mesmo assim", **não rode o teste**. Mas se rodou, respeite o resultado: inconclusivo = sem evidência de melhora = manter status quo.
-
-### 7. "Detectei outlier e removi do dataset"
-
-Outliers em paid media geralmente são **dados reais** (ex: 1 cliente caro fechou). Removê-los enviesa. Use métricas robustas (mediana) se outliers preocupam.
+Exception: mutually exclusive creative tests, such as 4 new RSAs in rotation, are not "1 change" technically, but creative testing naturally compares assets against each other.
 
 ---
 
-## 6. Casos práticos comuns
+## 5. Classic Google Ads A/B testing errors
 
-### Caso 1: testar nova bid strategy
+### 1. "I paused after 1 week because it was obvious A was better"
 
-```
-Hipótese: migrar de "Maximize Conv" para "tCPA US$ 50" reduzirá CPA em 15% sem perder >10% de volume.
+Random variation can create a 30% gap in 7 days and erase it in 21 days. **Always complete the planned duration.**
 
-Setup:
-- Draft da campanha existente.
-- Mudar bid strategy para tCPA US$ 50.
-- Convert to experiment, 50/50 split, 6 semanas.
+### 2. "I changed the copy DURING the experiment"
 
-Decisão:
-- CPA experiment / CPA control < 0.85 + p < 0.05 + Conv volume > 0.90 → APPLY
-- Outros casos → ROLLBACK
-```
+This breaks the test. If you need to change something, such as a typo, pause the experiment and restart with a fresh sample.
 
-### Caso 2: nova RSA com angle diferente
+### 3. "I compared week over week without a formal experiment"
 
-```
-Hipótese: RSA com benefit headlines + social proof (vs current feature-focused) aumentará CTR ≥10%.
+Seasonality, trend, and external events all interfere. You have no control. Week 1 is not the control for week 2; they are different scenarios under different conditions.
 
-Setup:
-- Draft da campanha.
-- Pausar RSAs atuais, criar RSA nova.
-- Convert to experiment, 50/50, 4 semanas.
+### 4. "I applied the change to all campaigns at once"
 
-Decisão:
-- CTR > 1.10 × control + Conv rate ≥ control × 0.95 → APPLY
-- CTR > 1.10 × control mas Conv rate < 0.90 × control → REJEITAR (clickbait)
-```
+You no longer have a control. Test in **1 campaign first** with a formal experiment, then roll out.
 
-### Caso 3: landing page nova
+### 5. "Statistical significance means I will gain 30%"
 
-```
-Hipótese: nova landing com form-3-fields (vs 7-fields) aumentará form completion ≥30%.
+Significance confirms the difference is real, not that it will stay at 30% in scale. Observed lift in small tests tends to be **inflated** because of regression to the mean.
 
-Setup:
-- Em vez de Drafts & Experiments, usar VWO/Optimizely para split server-side.
-- Manter URL Final do Google Ads inalterada (split é client/server-side).
-- 4 semanas, 50/50.
+### 6. "The test was inconclusive, so I will apply the variant anyway"
 
-Decisão:
-- Form completion +30% + lead quality (downstream) ≥ control → APPLY
-- Form completion +30% mas qualidade caiu (lead-to-customer ratio) → ANALISAR (pode ser ok se volume compensa)
-```
+If you planned to apply it regardless, **do not run the test**. If you ran it, respect the result: inconclusive = no evidence of improvement = keep status quo.
 
-### Caso 4: Search Themes em PMax
+### 7. "I detected an outlier and removed it from the dataset"
 
-```
-Hipótese: adicionar 30 search themes específicos a PMax aumentará Conv volume ≥15%.
+Outliers in paid media are usually **real data**, such as 1 expensive customer closing. Removing them biases the analysis. Use robust metrics such as median if outliers are concerning.
+
+---
+
+## 6. Common practical cases
+
+### Case 1: testing a new bid strategy
+
+```text
+Hypothesis: migrating from Maximize Conv to tCPA $50 will reduce CPA by 15% without losing more than 10% of volume.
 
 Setup:
-- Drafts & Experiments NÃO suporta PMax do mesmo jeito.
-- Use Campaign Mix Experiments (beta 2026) — testa cross-campaign.
-- Alternativa: criar 2 PMax campaigns, 1 com themes 1 sem, allocar budget igual.
-- 6 semanas mínimo.
+- Draft from existing campaign.
+- Change bid strategy to tCPA $50.
+- Convert to experiment, 50/50 split, 6 weeks.
 
-Decisão:
-- Volume > 1.15 × control + CPA dentro de 1.10 × control → APPLY themes
+Decision:
+- CPA experiment / CPA control < 0.85 + p < 0.05 + Conv volume > 0.90 -> APPLY
+- Other cases -> ROLLBACK
+```
+
+### Case 2: new RSA with different angle
+
+```text
+Hypothesis: RSA with benefit headlines + social proof vs current feature-focused copy will increase CTR by at least 10%.
+
+Setup:
+- Draft from campaign.
+- Pause current RSAs, create new RSA.
+- Convert to experiment, 50/50, 4 weeks.
+
+Decision:
+- CTR > 1.10 x control + Conv rate >= control x 0.95 -> APPLY
+- CTR > 1.10 x control but Conv rate < 0.90 x control -> REJECT as clickbait
+```
+
+### Case 3: new landing page
+
+```text
+Hypothesis: new landing with a 3-field form vs 7-field form will increase form completion by at least 30%.
+
+Setup:
+- Instead of Drafts & Experiments, use VWO/Optimizely for server-side split.
+- Keep Google Ads Final URL unchanged; split happens client/server-side.
+- 4 weeks, 50/50.
+
+Decision:
+- Form completion +30% + downstream lead quality >= control -> APPLY
+- Form completion +30% but quality fell -> ANALYZE; may be acceptable if volume compensates
+```
+
+### Case 4: Search Themes in PMax
+
+```text
+Hypothesis: adding 30 specific search themes to PMax will increase conversion volume by at least 15%.
+
+Setup:
+- Drafts & Experiments does NOT support PMax the same way.
+- Use Campaign Mix Experiments beta 2026 for cross-campaign testing.
+- Alternative: create 2 PMax campaigns, 1 with themes and 1 without, allocate equal budget.
+- Minimum 6 weeks.
+
+Decision:
+- Volume > 1.15 x control + CPA within 1.10 x control -> APPLY themes
 ```
 
 ---
 
-## 7. Statistical concepts essenciais (sem jargão)
+## 7. Essential statistical concepts without jargon
 
 ### Significance level (p-value)
 
-P-value = probabilidade de observar diferença assim grande **se as duas variantes fossem iguais**.
+P-value = probability of observing a difference this large **if both variants were actually equal**.
 
-- p < 0.05: 95% confiança que diferença é real.
-- p < 0.01: 99% confiança.
-- p > 0.05: insuficiente — não rejeita a hipótese nula.
+- p < 0.05: 95% confidence that the difference is real.
+- p < 0.01: 99% confidence.
+- p > 0.05: insufficient evidence; do not reject the null hypothesis.
 
 ### Confidence interval
 
-Em vez de "lift de +12%", reporte "+12% ± 4% com 95% confidence".
+Instead of "lift of +12%", report "+12% +/- 4% with 95% confidence".
 
-Se o intervalo cruza 0 (ex: -2% a +18%), o teste é **inconclusivo** mesmo se p < 0.05 nominalmente.
+If the interval crosses 0, for example -2% to +18%, the test is **inconclusive** even if nominal p < 0.05.
 
 ### Power
 
-Probabilidade de detectar diferença real (se ela existir). Power baixo (< 80%) significa que **mesmo se o teste não der significativo, pode haver diferença real que você não detectou**.
+Probability of detecting a real difference if it exists. Low power under 80% means that **even if the test is not significant, there may be a real difference you failed to detect**.
 
-Para 80% power, 5% significance:
-- 50% lift → 100 conv/variant.
-- 30% lift → 250 conv/variant.
-- 20% lift → 400 conv/variant.
-- 10% lift → 1.500 conv/variant.
-- 5% lift → 6.000 conv/variant.
+For 80% power, 5% significance:
+- 50% lift -> 100 conv/variant.
+- 30% lift -> 250 conv/variant.
+- 20% lift -> 400 conv/variant.
+- 10% lift -> 1,500 conv/variant.
+- 5% lift -> 6,000 conv/variant.
 
 ### Multiple testing problem
 
-Se você roda 20 testes simultaneamente e aceita p < 0.05, **estatisticamente** 1 vai sair "significativo" só por acaso. Para múltiplos testes, use Bonferroni correction (p < 0.05 / n) ou FDR (Benjamini-Hochberg).
+If you run 20 simultaneous tests and accept p < 0.05, **statistically** 1 can appear significant by chance. For multiple tests, use Bonferroni correction (p < 0.05 / n) or FDR (Benjamini-Hochberg).
 
-Em prática: se está rodando 5+ testes no mesmo período, **eleve o critério para p < 0.01**.
+In practice: if running 5+ tests in the same period, **raise the criterion to p < 0.01**.
 
 ---
 
-## 8. Templates prontos
+## 8. Ready-to-use templates
 
-### Template de plano de experimento
+### Experiment plan template
 
 ```markdown
-# Experiment: [nome curto]
+# Experiment: [short name]
 
-**Hipótese:** [variação] aumentará/reduzirá [métrica] em [magnitude] em [período], 
-porque [racional].
+**Hypothesis:** [variation] will increase/decrease [metric] by [magnitude] in [period],
+because [rationale].
 
-**Métrica primária:** [CPA / CTR / CVR / ROAS / etc]
-**Guard-rails:**
-  - [métrica 1] não pode cair mais que X%
-  - [métrica 2] não pode subir mais que Y%
+**Primary metric:** [CPA / CTR / CVR / ROAS / etc]
+**Guardrails:**
+  - [metric 1] cannot drop by more than X%
+  - [metric 2] cannot increase by more than Y%
 
 **Setup:**
-  - Campanha base: [nome]
-  - Mudança: [descrição em 1 frase]
+  - Base campaign: [name]
+  - Change: [one-sentence description]
   - Traffic split: 50/50
-  - Início: [data]
-  - Duração mínima: [3–6 semanas]
-  - Sample size alvo: ≥ X conv/variant
+  - Start: [date]
+  - Minimum duration: [3-6 weeks]
+  - Target sample size: >= X conv/variant
 
-**Critério de decisão:**
-  - APPLY se: primary lift > Y%, p < 0.05, guard-rails OK.
-  - ROLLBACK se: primary cai significantly OR guard-rail estoura.
-  - INCONCLUSIVE se: p > 0.05 ao final do prazo → manter status quo.
+**Decision criteria:**
+  - APPLY if: primary lift > Y%, p < 0.05, guardrails OK.
+  - ROLLBACK if: primary falls significantly OR guardrail breaks.
+  - INCONCLUSIVE if: p > 0.05 at end of period -> keep status quo.
 
-**Aprendizado esperado:**
-  - Independente do resultado, vamos aprender [insight].
+**Expected learning:**
+  - Regardless of result, we will learn [insight].
 ```
 
-### Checklist pré-lançamento de teste
+### Pre-launch testing checklist
 
-- [ ] Hipótese escrita com magnitude esperada.
-- [ ] Métrica primária + guard-rails definidos.
-- [ ] Sample size mínimo verificado contra histórico de conv.
-- [ ] Duração planejada (mínimo 3 semanas).
-- [ ] Apenas UMA variável mudando.
-- [ ] Critério de decisão pré-registrado.
-- [ ] Calendário sem evento sazonal grande no meio (Black Friday, etc).
-- [ ] Stakeholder informado: "não vou olhar antes de [data X]".
+- [ ] Hypothesis written with expected magnitude.
+- [ ] Primary metric + guardrails defined.
+- [ ] Minimum sample size checked against conversion history.
+- [ ] Planned duration, minimum 3 weeks.
+- [ ] Only ONE variable changing.
+- [ ] Decision criteria pre-registered.
+- [ ] Calendar has no major seasonal event during the test, such as Black Friday.
+- [ ] Stakeholder informed: "I will not read results before [date X]."
 
 ---
 
-## 9. Fontes (research 2026)
+## 9. Sources (2026 research)
 
-- [Statistical methodology of experiments — Google Ads Help](https://support.google.com/google-ads/answer/9232676)
-- [Google Ads Experimentation Tips 2026 — Growthspree](https://www.growthspreeofficial.com/blogs/best-tricks-and-tips-for-google-ads-experimentation-in-2026)
-- [A/B Testing in Google Ads 2026 — site2b.ua](https://www.site2b.ua/en/web-blog-en/a-b-tests-in-google-ads-how-to-run-them-correctly-in-2026.html)
-- [Google Ads Experiments B2B SaaS — Growthspree](https://www.growthspreeofficial.com/blogs/google-ads-experiments-b2b-saas-statistical-significance-methodology)
-- [Experiment Center 2026 Guide — ALM Corp](https://almcorp.com/blog/google-ads-experiment-center-guide/)
-- [Campaign Mix Experiments Beta — ALM Corp](https://almcorp.com/blog/google-ads-campaign-mix-experiments-complete-guide/)
-- [Drafts Explained — Digital Marketing Knight](https://www.digitalmarketingknight.com/google-ads-draft-campaigns-explained/)
-- [Ultimate Guide A/B Testing — AdNabu](https://blog.adnabu.com/google-ads/google-ads-ab-testing/)
+- [Statistical methodology of experiments - Google Ads Help](https://support.google.com/google-ads/answer/9232676)
+- [Google Ads Experimentation Tips 2026 - Growthspree](https://www.growthspreeofficial.com/blogs/best-tricks-and-tips-for-google-ads-experimentation-in-2026)
+- [A/B Testing in Google Ads 2026 - site2b.ua](https://www.site2b.ua/en/web-blog-en/a-b-tests-in-google-ads-how-to-run-them-correctly-in-2026.html)
+- [Google Ads Experiments B2B SaaS - Growthspree](https://www.growthspreeofficial.com/blogs/google-ads-experiments-b2b-saas-statistical-significance-methodology)
+- [Experiment Center 2026 Guide - ALM Corp](https://almcorp.com/blog/google-ads-experiment-center-guide/)
+- [Campaign Mix Experiments Beta - ALM Corp](https://almcorp.com/blog/google-ads-campaign-mix-experiments-complete-guide/)
+- [Drafts Explained - Digital Marketing Knight](https://www.digitalmarketingknight.com/google-ads-draft-campaigns-explained/)
+- [Ultimate Guide A/B Testing - AdNabu](https://blog.adnabu.com/google-ads/google-ads-ab-testing/)

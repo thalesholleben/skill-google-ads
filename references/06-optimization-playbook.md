@@ -1,369 +1,370 @@
-# 06 — Optimization Playbook (diagnóstico, daily/weekly/monthly, benchmarks)
+# 06 - Optimization Playbook (diagnosis, daily/weekly/monthly, benchmarks)
 
-> Carregue este arquivo quando o usuário pedir para otimizar uma conta, fazer auditoria, planejar próximos passos, ou quando quiser referência de cadência operacional.
-
----
-
-## 1. Diagnóstico em 30 minutos (auditoria rápida)
-
-Workflow para ler uma conta nova ou problemática rápido. Use os CSVs/UI nesta ordem:
-
-### Passo 1 — Visão geral (5 min)
-
-| Olhar | O que procurar |
-|---|---|
-| Performance Tab → últimos 30d | Tendência de Conv, CPA, CTR vs período anterior |
-| Recomendações (Recommendations Tab) | Score de otimização, mas tomar com cuidado (muitas são pró-Google, não pró-conta) |
-| Account-level alertas | Disapprovals, limiteds, falta de budget |
-
-### Passo 2 — Onde vai o dinheiro (5 min)
-
-| Olhar | Sintomas |
-|---|---|
-| Campanha → Cost (descrescente) | Top 3 campanhas concentram quanto? Concentração saudável: 60–80% nas top 3 |
-| Campanha → Conv. count (descrescente) | É a mesma ordem do Cost? Se não, investigar gap |
-| Campanha → CPA | Variação 3–5× entre campanhas é normal; >10× é red flag |
-
-### Passo 3 — Quality Score audit (5 min)
-
-| Olhar | Sintoma |
-|---|---|
-| Keywords filtrar por QS | % de keywords com QS ≤ 5? Se > 30%, é grande oportunidade |
-| Keywords com gasto top 10 | QS deles? Se ≤ 6, atacar PRIMEIRO (alto ROI de melhoria) |
-
-### Passo 4 — Search Terms (10 min)
-
-| Olhar | Ação |
-|---|---|
-| Search Terms → Cost descrescente, Conv = 0 | Candidatos a negative |
-| Search Terms → Conv > 5, alto CTR | Candidatos a promote para exact |
-| Search Terms → "free", "DIY", "tutorial", "salary", "jobs" | Lista de negatives óbvias |
-
-### Passo 5 — Ad copy & extensions (3 min)
-
-| Olhar | Sintoma |
-|---|---|
-| Ad Strength por ad group | Quantos com "Poor" ou "Average"? Esses precisam refresh |
-| Sitelinks / Callouts / Snippets | Todos preenchidos? Mín 6 sitelinks, 8 callouts |
-| Extensions com Impr = 0 | Não estão servindo — investigar (rejeição? baixo Ad Rank?) |
-
-### Passo 6 — Auction Insights (2 min)
-
-| Olhar | Sintoma |
-|---|---|
-| Top 3 competidores | Quem domina overlap rate? |
-| Position Above Rate | > 50% para todos = você está abaixo, atacar Ad Rank |
-| Abs Top IS em Brand | < 60% = competidor comprando seu nome |
-
-### Outputs do diagnóstico
-
-Após 30 min você deve ter:
-
-1. **3 maiores fontes de waste** (com $ quantificado).
-2. **3 maiores oportunidades** (com $ ou volume estimado).
-3. **3 ações imediatas** (essa semana).
-4. **3 ações estruturais** (próximas 4 semanas).
+> Load this file when the user asks to optimize an account, run an audit, plan next steps, or needs an operating cadence reference.
 
 ---
 
-## 2. Cadência operacional
+## 1. 30-minute diagnosis (quick audit)
 
-### Diário (5 min) — Anomaly check
+Workflow for reading a new or problematic account quickly. Use CSVs/UI in this order:
 
-Rode automatizado (script + email/Slack alert) ou check manual.
+### Step 1 - Overview (5 min)
 
-**Triggers de alarme:**
-- CPA diário > 1.5× CPA média trailing 14d.
-- Gasto diário > 1.3× gasto médio trailing 14d.
-- Conv = 0 em campanha com histórico de >3 conv/dia.
-- CTR diário < 50% da média.
-- Bid limited / budget limited de novas campanhas.
+| Look at | What to look for |
+|---|---|
+| Performance tab -> last 30d | Trend of Conversions, CPA, CTR vs previous period |
+| Recommendations tab | Optimization score, but treat carefully: many recommendations are pro-Google, not pro-account |
+| Account-level alerts | Disapprovals, limited status, budget issues |
 
-**Causa comum:** tracking quebrado, landing fora do ar, rejeição de ad.
+### Step 2 - Where the money goes (5 min)
 
-### Semanal (60–90 min)
+| Look at | Symptoms |
+|---|---|
+| Campaign -> Cost descending | How much do the top 3 campaigns concentrate? Healthy concentration: 60-80% in top 3 |
+| Campaign -> Conv. count descending | Is it the same order as Cost? If not, investigate gap |
+| Campaign -> CPA | 3-5x variation between campaigns is normal; >10x is a red flag |
 
-**Bloco 1 — Search Terms (20 min)**
-- Mineração de top 100 search terms por gasto.
-- Adicionar 5–20 negatives.
-- Promover 1–3 search terms top performers para exact.
+### Step 3 - Quality Score audit (5 min)
 
-**Bloco 2 — Quality Score & Ad Performance (15 min)**
-- Filter keywords QS < 6 com gasto > $X.
-- Avaliar ad relevance / landing page experience flag.
-- Pausar headlines com "Low" performance rating.
+| Look at | Symptom |
+|---|---|
+| Keywords filtered by QS | Percentage of keywords with QS <= 5? If >30%, this is a major opportunity |
+| Top 10 keywords by spend | Their QS? If <= 6, attack FIRST because improvement has high ROI |
 
-**Bloco 3 — Bid review (15 min)**
-- Em Smart Bidding: ajustar **target** se Conv volume não bate (não mexer toda semana).
-- Em Maximize Clicks/Manual: ajustar bids granular se necessário.
-- Verificar IS Lost (Budget) e (Rank) por campanha.
+### Step 4 - Search Terms (10 min)
 
-**Bloco 4 — Extensions (10 min)**
-- Quais sitelinks têm 0 impr? Pausar/substituir.
-- Adicionar callouts sazonais se aplicável.
-- Verificar location extension (GBP linkado).
+| Look at | Action |
+|---|---|
+| Search Terms -> Cost descending, Conv = 0 | Negative candidates |
+| Search Terms -> Conv > 5, high CTR | Candidates to promote to exact |
+| Search Terms containing free, DIY, tutorial, salary, jobs | Obvious negatives list |
 
-**Bloco 5 — Audience review (5 min)**
-- Performance dos audience signals em PMax.
-- Listas de Customer Match atualizadas (refresh recomendado a cada 30d).
+### Step 5 - Ad copy & extensions (3 min)
 
-### Quinzenal (90 min)
+| Look at | Symptom |
+|---|---|
+| Ad Strength by ad group | How many are Poor or Average? These need refresh |
+| Sitelinks / Callouts / Snippets | All filled? Minimum 6 sitelinks, 8 callouts |
+| Extensions with Impr = 0 | Not serving; investigate rejection or low Ad Rank |
 
-- **Realocação de budget**: campanhas batendo target com IS limited (Budget) → subir 20%; campanhas com CPA muito acima do alvo → cortar ou pausar.
-- **Auction Insights**: deep-dive em mudanças de competidor.
-- **Decisão de testes A/B**: definir próximo experiment.
-- **Asset refresh em PMax**: rodar Asset Reporting, substituir baixo desempenho.
+### Step 6 - Auction Insights (2 min)
 
-### Mensal (3–4 horas)
+| Look at | Symptom |
+|---|---|
+| Top 3 competitors | Who dominates overlap rate? |
+| Position Above Rate | >50% for all means you are below; attack Ad Rank |
+| Abs Top IS in Brand | <60% means competitor is buying your name |
 
-**Bloco 1 — Análise estratégica (60 min)**
-- KPIs do mês vs metas vs mês anterior.
-- Tracking de progresso de testes ativos.
-- Decisões de bid strategy (migrar para tROAS? adicionar target tROAS?).
-- Plano para o mês seguinte.
+### Diagnosis outputs
 
-**Bloco 2 — N-gram analysis (30 min)**
-- Rodar `scripts/n_gram_analysis.py` em search terms últimos 30d.
-- Adicionar lote de negatives + promover top n-grams.
+After 30 minutes you should have:
 
-**Bloco 3 — Auction Insights review (30 min)**
-- Mudanças entre competidores.
+1. **3 largest sources of waste**, quantified in dollars.
+2. **3 largest opportunities**, estimated in dollars or volume.
+3. **3 immediate actions** for this week.
+4. **3 structural actions** for the next 4 weeks.
+
+---
+
+## 2. Operating cadence
+
+### Daily (5 min) - anomaly check
+
+Run automated through script + email/Slack alert, or manual check.
+
+**Alarm triggers:**
+- Daily CPA > 1.5x trailing 14d average CPA.
+- Daily spend > 1.3x trailing 14d average spend.
+- Conv = 0 in a campaign with history of >3 conv/day.
+- Daily CTR < 50% of average.
+- Bid limited / budget limited for new campaigns.
+
+**Common cause:** broken tracking, landing page down, ad disapproval.
+
+### Weekly (60-90 min)
+
+**Block 1 - Search Terms (20 min)**
+- Mine top 100 search terms by spend.
+- Add 5-20 negatives.
+- Promote 1-3 top performer search terms to exact.
+
+**Block 2 - Quality Score & Ad Performance (15 min)**
+- Filter keywords with QS < 6 and spend > $X.
+- Evaluate ad relevance / landing page experience flags.
+- Pause headlines with Low performance rating.
+
+**Block 3 - Bid review (15 min)**
+- In Smart Bidding: adjust **target** if conversion volume is not meeting plan, but not every week.
+- In Maximize Clicks/Manual: adjust granular bids if needed.
+- Check IS Lost (Budget) and (Rank) by campaign.
+
+**Block 4 - Extensions (10 min)**
+- Which sitelinks have 0 impressions? Pause/replace.
+- Add seasonal callouts if relevant.
+- Verify location extension and GBP link.
+
+**Block 5 - Audience review (5 min)**
+- Performance of audience signals in PMax.
+- Customer Match lists updated; refresh every 30 days is recommended.
+
+### Every two weeks (90 min)
+
+- **Budget reallocation**: campaigns hitting target with IS limited by Budget -> raise 20%; campaigns with CPA far above target -> cut or pause.
+- **Auction Insights**: deep dive into competitor changes.
+- **A/B testing decision**: define next experiment.
+- **PMax asset refresh**: run Asset Reporting and replace low performers.
+
+### Monthly (3-4 hours)
+
+**Block 1 - Strategic analysis (60 min)**
+- Month KPIs vs goals vs previous month.
+- Track progress of active tests.
+- Bid strategy decisions: migrate to tROAS? Add target tROAS?
+- Plan for next month.
+
+**Block 2 - N-gram analysis (30 min)**
+- Run `scripts/n_gram_analysis.py` on last 30d search terms.
+- Add batch of negatives + promote top n-grams.
+
+**Block 3 - Auction Insights review (30 min)**
+- Competitor changes.
 - Brand defense status.
-- Identificação de novas threats.
+- New threat identification.
 
-**Bloco 4 — Reporting (60 min)**
-- Gerar `.docx` com `scripts/build_report.py` (interno) e `scripts/build_report_cliente.py` (cliente).
-- Apresentar findings para stakeholder.
+**Block 4 - Reporting (60 min)**
+- Generate `.docx` with `scripts/build_report.py` for internal report and `scripts/build_report_cliente.py` for client report.
+- Present findings to stakeholder.
 
-**Bloco 5 — Tracking review (15 min)**
-- Conv actions: Primary corretas? Valor up-to-date?
-- Enhanced Conversions: status "active" e match rate > 70%.
-- DDA: status ON.
+**Block 5 - Tracking review (15 min)**
+- Conversion actions: correct Primary actions?
+- Conversion value up to date?
+- Enhanced Conversions: active status and match rate >70%.
+- DDA: ON.
 
-### Trimestral (1 dia)
+### Quarterly (1 day)
 
-- Auditoria estrutural completa.
-- Revisão de match types & keyword strategy.
+- Complete structural audit.
+- Match type & keyword strategy review.
 - Account-level negatives review.
 - Customer Match list cleanup.
-- Reorganização de campanhas/ad groups se necessário.
-- Budget allocation review com base em ROI por campanha.
+- Campaign/ad group reorganization if needed.
+- Budget allocation review based on ROI by campaign.
 
 ---
 
-## 3. Diagnóstico avançado por sintoma
+## 3. Advanced diagnosis by symptom
 
-### Sintoma: "CPA subiu de US$ 50 para US$ 80 em 30 dias"
+### Symptom: "CPA rose from $50 to $80 in 30 days"
 
-Decomposição:
+Decomposition:
 
-```
+```text
 CPA = Cost / Conv
 
-CPA subiu se:
-  - Cost subiu (mais clicks, mesmo conv) → CPC subiu OU CTR subiu sem conv subir
-  - Conv caiu (mesmo cost) → CR caiu
-  - Ambos
+CPA rises if:
+  - Cost rises while conversions stay flat -> CPC rose OR CTR rose without conversion increase
+  - Conversions fall while cost stays flat -> CR fell
+  - Both
 ```
 
-**Investigar em ordem:**
+**Investigate in order:**
 
-1. **Tracking** — Conv volume despencou em data específica? (Verificar implementação tag, mudanças de site).
-2. **CPC** — subiu? Auction Insights → competição entrou? QS caiu?
-3. **CR** — caiu? Search Terms relevant? Landing page mudou? Form mudou? Speed?
-4. **Mix** — campanha cara virou maior fatia? (PMax escalou?)
-5. **Sazonalidade** — comparar com mesmo mês ano anterior.
+1. **Tracking** - did conversion volume collapse on a specific date? Check tag implementation and site changes.
+2. **CPC** - did it rise? Auction Insights -> new competition? QS dropped?
+3. **CR** - did it fall? Search Terms still relevant? Landing page changed? Form changed? Speed?
+4. **Mix** - did an expensive campaign become a larger share? Did PMax scale?
+5. **Seasonality** - compare against the same month last year.
 
-### Sintoma: "CTR alto (8%) mas conv. rate baixíssimo (1%)"
+### Symptom: "High CTR (8%) but very low conversion rate (1%)"
 
-Diagnóstico: **clickbait** ou **mismatch ad↔landing**.
+Diagnosis: **clickbait** or **ad-to-landing mismatch**.
 
-**Ações:**
-- Auditar headlines: prometendo algo que landing não entrega?
-- Search Terms: queries irrelevantes clicando? (Negatives).
-- Landing: message match com a query / headline?
-- Form: muito longo? Friction?
+**Actions:**
+- Audit headlines: promising something the landing does not deliver?
+- Search Terms: irrelevant queries clicking? Add negatives.
+- Landing: message match with query/headline?
+- Form: too long? Friction?
 
-### Sintoma: "Volume estagnado há 2 meses, target batido"
+### Symptom: "Volume has been flat for 2 months, target is being hit"
 
-Diagnóstico: oportunidade de **escalar**.
+Diagnosis: opportunity to **scale**.
 
-**Ações em ordem:**
-1. **Subir tCPA em 15%** ou **cortar tROAS em 10%** — abre headroom de leilão.
-2. **Verificar IS Lost (Budget)** — se > 20%, subir budget primeiro.
-3. **Adicionar match types broader** — phrase → phrase + broad em campanha discovery.
-4. **Adicionar Search Themes** em PMax existente.
-5. **Expandir geos** (se geos vizinhos têm mesmo perfil de cliente).
-6. **Lançar PMax** se ainda não tem.
+**Actions in order:**
+1. **Raise tCPA by 15%** or **cut tROAS by 10%** to create auction headroom.
+2. **Check IS Lost (Budget)**; if >20%, raise budget first.
+3. **Add broader match types**: phrase -> phrase + broad in discovery campaign.
+4. **Add Search Themes** in existing PMax.
+5. **Expand geos** if nearby geos have the same customer profile.
+6. **Launch PMax** if not already present.
 
-### Sintoma: "Brand campaign tem CPA US$ 8 e Non-Brand US$ 80"
+### Symptom: "Brand campaign CPA is $8 and Non-Brand CPA is $80"
 
-Esse é o caso normal! Brand é defesa de quem já te conhece. Mas:
+That is normal. Brand is defense for people who already know you. But:
 
-**Verificar:**
-- Brand está com Abs Top IS > 80%? Se < 60%, competidor comprando seu nome.
-- Brand está canibalizando organic? **Em geral, não** — quem clica no ad clica no organic se ad não estiver lá. Mas testar pausing por 2 semanas se quer evidência (cuidado: competitors podem tomar o slot).
+**Check:**
+- Is Brand Abs Top IS >80%? If <60%, competitor is buying your name.
+- Is Brand canibalizing organic? **Generally no** - the person who clicks the ad would often click organic if no ad existed. Test pausing for 2 weeks only if evidence is needed, and watch competitors.
 
-### Sintoma: "Ad Strength 'Poor' em todas RSAs, não consigo subir"
+### Symptom: "Ad Strength is Poor in all RSAs and I cannot improve it"
 
-**Causas comuns:**
-1. Keyword não aparece em headlines.
-2. Headlines repetitivas (mesmas palavras várias vezes).
-3. Pinning excessivo.
-4. Falta de CTAs / benefits / unique angles.
+**Common causes:**
+1. Keyword does not appear in headlines.
+2. Headlines are repetitive.
+3. Excessive pinning.
+4. Lack of CTAs, benefits, and unique angles.
 
-**Solução**: refazer com 15 headlines diversas seguindo os templates de `04-campaign-creation.md`.
+**Solution**: rebuild with 15 diverse headlines following the templates in `04-campaign-creation.md`.
 
 ---
 
-## 4. Realocação de budget (framework)
+## 4. Budget reallocation framework
 
-### Princípio
+### Principle
 
-**Mova budget de campanhas com `CPA Real / CPA Alvo > 1.3` para campanhas com `< 0.8`**, mas nunca aumente uma campanha em mais de 30% de uma vez (reseta learning).
+**Move budget from campaigns where `Actual CPA / Target CPA > 1.3` to campaigns where it is `< 0.8`**, but never increase a campaign by more than 30% at once because it can reset learning.
 
-### Tabela de decisão
+### Decision table
 
-| CPA real / CPA alvo | Conv. trend (vs mês anterior) | Ação |
+| Actual CPA / Target CPA | Conv. trend vs previous month | Action |
 |---|---|---|
-| < 0.8 | Estável ou crescente | Subir budget +20% |
-| < 0.8 | Decrescente | Investigar (saturação?), manter por mais 14d |
-| 0.8 – 1.2 | Qualquer | Manter |
-| 1.2 – 1.5 | Estável ou crescente | Apertar tCPA -10% antes de cortar budget |
-| > 1.5 | Decrescente | Cortar 30% ou pausar |
+| < 0.8 | Stable or growing | Raise budget +20% |
+| < 0.8 | Declining | Investigate saturation; keep for another 14d |
+| 0.8-1.2 | Any | Maintain |
+| 1.2-1.5 | Stable or growing | Tighten tCPA -10% before cutting budget |
+| > 1.5 | Declining | Cut 30% or pause |
 
-### Exemplo prático
+### Practical example
 
-```
-Campanha A: budget $30/dia, CPA US$ 35 vs alvo US$ 40, IS Lost (Budget) = 25% → SUBIR +20% = $36/dia
-Campanha B: budget $30/dia, CPA US$ 70 vs alvo US$ 50, conv caindo → CORTAR -30% = $21/dia OU pausar
-Total: -$3/dia (sobra para teste novo ou Display Remarketing)
+```text
+Campaign A: budget $30/day, CPA $35 vs target $40, IS Lost (Budget) = 25% -> RAISE +20% = $36/day
+Campaign B: budget $30/day, CPA $70 vs target $50, conversions falling -> CUT -30% = $21/day OR pause
+Total: -$3/day, left for a new test or Display Remarketing
 ```
 
 ---
 
-## 5. Benchmarks 2026 (para sanity check)
+## 5. 2026 benchmarks for sanity checks
 
-### Cross-industry medianas Search
+### Cross-industry Search medians
 
-| Métrica | Mediana 2026 | Trend YoY |
-|---|---|---|
-| CPC | US$ 4,22 | +12% |
-| CTR | 6,11% | +7% |
-| Conv. Rate | 7,04% | -9% |
-| CPA | US$ 53,52 | +6% |
+| Metric | 2026 median | YoY trend |
+|---|---:|---:|
+| CPC | $4.22 | +12% |
+| CTR | 6.11% | +7% |
+| Conv. Rate | 7.04% | -9% |
+| CPA | $53.52 | +6% |
 
-**Insight 2026:** CPC subiu mais que CPA → conversion rate (page-side) **amorteceu** o impacto do CPC. Onde a page não acompanhou, CPA explodiu. **Landing pages viraram o gargalo.**
+**2026 insight:** CPC rose more than CPA, meaning page-side conversion rate **absorbed** much of the CPC impact. Where the page did not keep up, CPA exploded. **Landing pages became the bottleneck.**
 
-### Por vertical (medianas)
+### By vertical, medians
 
 | Vertical | CPC US$ | CTR | Conv Rate | CPA US$ |
-|---|---|---|---|---|
-| Local Services / Home Services | 3–8 | 5–8% | 8–15% | 30–80 |
-| E-commerce | 0,80–3 | 2–6% | 1–4% | 25–80 |
-| B2B SaaS | 3–8 | 3–6% | 2–6% | 80–250 |
-| Legal | 6–15+ | 4–8% | 3–8% | 80–200+ |
-| Health & Wellness | 1–4 | 5–10% | 5–12% | 30–100 |
-| Automotive (Service) | 2–5 | 6–10% | 8–14% | 25–70 |
-| Education | 2–5 | 4–7% | 3–8% | 50–150 |
-| Real Estate | 1–4 | 5–8% | 3–7% | 50–150 |
-| Finance/Insurance | 5–15 | 4–7% | 4–10% | 80–250 |
+|---|---:|---:|---:|---:|
+| Local Services / Home Services | 3-8 | 5-8% | 8-15% | 30-80 |
+| E-commerce | 0.80-3 | 2-6% | 1-4% | 25-80 |
+| B2B SaaS | 3-8 | 3-6% | 2-6% | 80-250 |
+| Legal | 6-15+ | 4-8% | 3-8% | 80-200+ |
+| Health & Wellness | 1-4 | 5-10% | 5-12% | 30-100 |
+| Automotive Service | 2-5 | 6-10% | 8-14% | 25-70 |
+| Education | 2-5 | 4-7% | 3-8% | 50-150 |
+| Real Estate | 1-4 | 5-8% | 3-7% | 50-150 |
+| Finance/Insurance | 5-15 | 4-7% | 4-10% | 80-250 |
 
-**Não use estes números como meta** — meta vem da economia do cliente. Use como **sanity check**: "minha conta está em CPA US$ 200 numa vertical onde a mediana é US$ 50 → algo está muito errado, ou o cliente é um caso muito atípico (justificar)".
+**Do not use these as targets**. Targets come from client economics. Use them as a **sanity check**: "my account is at $200 CPA in a vertical where median is $50 -> something is very wrong, or the client is a highly atypical case that must be justified."
 
-### CTR por posição (search)
+### CTR by position in search
 
-- Posição 1 (Abs Top): 30–40% CTR (em search com intent forte).
-- Posição 2: 12–18%.
-- Posição 3: 6–10%.
-- Posição 4+: 3–6%.
+- Position 1 (Abs Top): 30-40% CTR in search with strong intent.
+- Position 2: 12-18%.
+- Position 3: 6-10%.
+- Position 4+: 3-6%.
 
-Esse decay justifica investimento em Quality Score / extensions para subir posição.
+This decay justifies investment in Quality Score and extensions to move up.
 
 ---
 
-## 6. Anti-padrões em otimização
+## 6. Optimization anti-patterns
 
-| Anti-padrão | Por quê é ruim | Faça |
+| Anti-pattern | Why it is bad | Do this |
 |---|---|---|
-| Mexer em tCPA toda semana | Reset learning, conv. trend caótica | Mexer no máximo a cada 14d |
-| Pausar campanhas/keywords toda semana | Dados não acumulam, decisão é prematura | Esperar 14d de dados |
-| Negativar 1 search term ruim e ignorar n-gram | Trabalho infinito, baixo impacto | N-gram analysis quinzenal |
-| Aplicar todas Recomendações do Google | Muitas são para Google, não pra você | Avaliar ROI de cada uma |
-| Ignorar Quality Score ("Smart Bidding cuida disso") | QS afeta CPC efetivo, não só posição | Atacar QS<6 sempre que possível |
-| Comparar CPA mês com mês sem ajustar mix | Mistura mudanças de mix com mudanças de eficiência | Decompor CPA por campanha primeiro |
-| Apostar tudo em PMax | Falta de visibilidade, perda de controle | Search base + PMax como complemento |
-| "Vou pausar Brand para economizar" | Brand é defesa; pausar = competidor toma | Manter Brand sempre, otimizar custo |
-| Mudar copy + landing + bid no mesmo experiment | Não consegue isolar causa | 1 variável por teste |
-| Sem dashboard de KPIs | Decisões reativas, não proativas | Looker Studio / planilha automatizada |
+| Changing tCPA every week | Resets learning, chaotic conversion trend | Change at most every 14 days |
+| Pausing campaigns/keywords every week | Data does not accumulate; decisions are premature | Wait for 14 days of data |
+| Negating 1 bad search term and ignoring n-grams | Infinite work, low impact | N-gram analysis every two weeks |
+| Applying all Google Recommendations | Many are for Google, not for you | Evaluate ROI of each one |
+| Ignoring Quality Score because "Smart Bidding handles it" | QS affects effective CPC, not just position | Attack QS<6 whenever possible |
+| Comparing monthly CPA without mix adjustment | Mix changes are confused with efficiency changes | Decompose CPA by campaign first |
+| Betting everything on PMax | Low visibility, loss of control | Search foundation + PMax as complement |
+| "I will pause Brand to save budget" | Brand is defense; pausing lets competitor take the slot | Keep Brand always, optimize cost |
+| Changing copy + landing + bid in the same experiment | Cannot isolate cause | 1 variable per test |
+| No KPI dashboard | Reactive, not proactive decisions | Looker Studio / automated spreadsheet |
 
 ---
 
-## 7. Sinais de que a conta precisa de reestruturação (não só otimização)
+## 7. Signs the account needs restructuring, not only optimization
 
-Otimização incremental não resolve problemas estruturais. Sinais de que está na hora de **reestruturar**:
+Incremental optimization cannot fix structural problems. Signs it is time to **restructure**:
 
-- Múltiplas verticals/produtos no mesmo conjunto de campanhas (Smart Bidding não consegue aprender padrões distintos).
-- 90% das keywords em 2 ad groups (rebalance é urgente).
-- Toda a conta em Manual CPC (subaproveitando AI).
-- Sem tracking de valor (preso em tCPA quando poderia tROAS).
-- Campanha pré-PMax + PMax canibalizando.
-- 30+ campanhas com gasto < US$ 5/dia cada (consolidar).
-- Performance "lateral" há 6+ meses sem inovação.
+- Multiple verticals/products in the same campaign set; Smart Bidding cannot learn distinct patterns.
+- 90% of keywords in 2 ad groups; rebalance is urgent.
+- Entire account on Manual CPC; underusing AI.
+- No value tracking; stuck on tCPA when tROAS could be used.
+- Pre-PMax campaign plus PMax canibalization.
+- 30+ campaigns each spending under $5/day; consolidate.
+- Sideways performance for 6+ months with no innovation.
 
 ---
 
-## 8. Template de plano de otimização
+## 8. Optimization plan template
 
-Use este template ao apresentar plano para o cliente.
+Use this template when presenting a plan to the client.
 
 ```markdown
-# Plano de Otimização — [Conta] — [Mês]
+# Optimization Plan - [Account] - [Month]
 
-## Diagnóstico
-- Gasto: US$ X. Conv: Y. CPA: US$ Z (target: US$ W).
-- 3 sintomas principais:
-  1. [sintoma com $ quantificado]
+## Diagnosis
+- Spend: $X. Conv: Y. CPA: $Z (target: $W).
+- 3 main symptoms:
+  1. [symptom with quantified $ impact]
   2. [...]
   3. [...]
 
-## Plano (4 ondas)
+## Plan (4 waves)
 
-### Onda 1 — Esta semana (impacto imediato)
-- [ ] Negativar [N] termos identificados (waste estimado: US$ X/mês)
-- [ ] Pausar keyword(s) com 0 conv > US$ Y gasto
-- [ ] Refresh de RSA em [ad group X] (Ad Strength: Poor → Good)
+### Wave 1 - This week (immediate impact)
+- [ ] Negative [N] identified terms (estimated waste: $X/month)
+- [ ] Pause keyword(s) with 0 conv and > $Y spend
+- [ ] RSA refresh in [ad group X] (Ad Strength: Poor -> Good)
 
-### Onda 2 — Próximas 2 semanas (correções estruturais)
-- [ ] Restruturar ad group X (quebrar em 2)
-- [ ] Subir tCPA da campanha Y de $A para $B (ramp gradual)
-- [ ] Adicionar Customer Match para excluir clientes existentes
+### Wave 2 - Next 2 weeks (structural fixes)
+- [ ] Restructure ad group X by splitting into 2
+- [ ] Raise campaign Y tCPA from $A to $B with gradual ramp
+- [ ] Add Customer Match to exclude existing customers
 
-### Onda 3 — Próximas 4 semanas (testes e expansão)
-- [ ] Lançar experiment: [hipótese H]
-- [ ] Adicionar campanha de [vertical/audience nova]
-- [ ] N-gram analysis + lote de negatives
+### Wave 3 - Next 4 weeks (tests and expansion)
+- [ ] Launch experiment: [hypothesis H]
+- [ ] Add campaign for [new vertical/audience]
+- [ ] N-gram analysis + negative batch
 
-### Onda 4 — Próximos 60 dias (estratégico)
-- [ ] Migrar para tROAS após implementar conversion value
-- [ ] Implementar OCI para qualificar leads downstream
-- [ ] Ativar AI Max em campanhas existentes (após validação)
+### Wave 4 - Next 60 days (strategic)
+- [ ] Migrate to tROAS after implementing conversion value
+- [ ] Implement OCI to qualify downstream leads
+- [ ] Enable AI Max in existing campaigns after validation
 
-## Resultados esperados
-- Q+30d: CPA cai de US$ Z para US$ Z' (-X%), volume estável ou +Y%.
-- Q+60d: testar lift de tROAS / qualidade de leads.
-- Q+90d: estrutura limpa, foundation para escalar.
+## Expected results
+- Q+30d: CPA falls from $Z to $Z' (-X%), volume stable or +Y%.
+- Q+60d: test lift from tROAS / lead quality.
+- Q+90d: cleaner structure, foundation for scaling.
 ```
 
 ---
 
-## 9. Fontes (research 2026)
+## 9. Sources (2026 research)
 
-- [Quality Score 2026 — Optmyzr](https://www.optmyzr.com/blog/google-ads-quality-score/)
-- [Benchmarks 2026 — Digital Applied](https://www.digitalapplied.com/blog/google-ads-benchmarks-2026-cpc-ctr-cvr-industry)
-- [Benchmarks by Industry 2026 — Foundry CRO](https://foundrycro.com/blog/google-ads-benchmarks-by-industry-2026/)
-- [PPC Benchmarks 2026 — WebFX](https://www.webfx.com/blog/marketing/ppc-benchmarks-to-know/)
-- [CRO Best Practices 2026 — Aimers](https://aimers.io/blog/conversion-rate-optimization-best-practices)
-- [Landing Page Optimization 2026 — SaaS Hero](https://www.saashero.net/google-ppc/google-ads-landing-page-optimization/)
-- [N-gram Wasted Spend — Taikun Digital](https://www.taikundigital.com/blog/remove-ppc-waste-n-gram-analysis/)
-- [Google Ads Scripts 2026 — groas.ai](https://groas.ai/post/best-google-ads-scripts-2026-install-guide-automation-limits)
+- [Quality Score 2026 - Optmyzr](https://www.optmyzr.com/blog/google-ads-quality-score/)
+- [Benchmarks 2026 - Digital Applied](https://www.digitalapplied.com/blog/google-ads-benchmarks-2026-cpc-ctr-cvr-industry)
+- [Benchmarks by Industry 2026 - Foundry CRO](https://foundrycro.com/blog/google-ads-benchmarks-by-industry-2026/)
+- [PPC Benchmarks 2026 - WebFX](https://www.webfx.com/blog/marketing/ppc-benchmarks-to-know/)
+- [CRO Best Practices 2026 - Aimers](https://aimers.io/blog/conversion-rate-optimization-best-practices)
+- [Landing Page Optimization 2026 - SaaS Hero](https://www.saashero.net/google-ppc/google-ads-landing-page-optimization/)
+- [N-gram Wasted Spend - Taikun Digital](https://www.taikundigital.com/blog/remove-ppc-waste-n-gram-analysis/)
+- [Google Ads Scripts 2026 - groas.ai](https://groas.ai/post/best-google-ads-scripts-2026-install-guide-automation-limits)
