@@ -1,4 +1,4 @@
-"""Relatorio cliente — versao resumida e estrategica para apresentacao."""
+"""Client report - concise strategic version for presentation."""
 from docx import Document
 from docx.shared import Pt, RGBColor, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -6,7 +6,7 @@ from docx.enum.table import WD_ALIGN_VERTICAL, WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
-# ============= PALETA =============
+# ============= PALETTE =============
 NAVY = RGBColor(0x0F, 0x2A, 0x47)
 ACCENT = RGBColor(0xE8, 0x6B, 0x00)
 GREEN = RGBColor(0x1F, 0x8A, 0x4E)
@@ -24,14 +24,14 @@ for section in doc.sections:
     section.left_margin = Cm(2.0)
     section.right_margin = Cm(2.0)
 
-# Aplica Montserrat em todo o documento (Normal + Headings)
+# Apply Montserrat across the document: Normal + Headings.
 def _apply_font_to_style(style_name, size=None, bold=None, color=None):
     try:
         st = doc.styles[style_name]
     except KeyError:
         return
     st.font.name = FONT
-    # garante a fonte tambem no rPr east-asia / cs (compatibilidade Word)
+    # Also set the font in eastAsia/cs rPr for Word compatibility.
     rpr = st.element.get_or_add_rPr()
     rfonts = rpr.find(qn('w:rFonts'))
     if rfonts is None:
@@ -72,7 +72,7 @@ def set_cell_borders(cell, color="BFBFBF", sz="4"):
     tc_pr.append(tc_borders)
 
 def _force_run_font(run, size=None, color=None, bold=None):
-    """Garante Montserrat no run + opcoes."""
+    """Force Montserrat on a run plus optional styling."""
     run.font.name = FONT
     rpr = run._r.get_or_add_rPr()
     rfonts = rpr.find(qn('w:rFonts'))
@@ -89,7 +89,7 @@ def _force_run_font(run, size=None, color=None, bold=None):
         run.bold = bold
 
 def add_h2(text, color=NAVY, size=15, after=4, before=14, underline_border=True):
-    """Heading 2 — usa estilo nativo do Word (aparece no sumario)."""
+    """Heading 2 - use native Word style so it appears in the table of contents."""
     p = doc.add_paragraph(style='Heading 2')
     p.paragraph_format.space_before = Pt(before)
     p.paragraph_format.space_after = Pt(after)
@@ -107,7 +107,7 @@ def add_h2(text, color=NAVY, size=15, after=4, before=14, underline_border=True)
     return p
 
 def add_h3(text, color=NAVY, size=12, after=4, before=12):
-    """Heading 3 — para topicos numerados (aparece no sumario)."""
+    """Heading 3 - numbered topics that appear in the table of contents."""
     p = doc.add_paragraph(style='Heading 3')
     p.paragraph_format.space_before = Pt(before)
     p.paragraph_format.space_after = Pt(after)
@@ -217,7 +217,7 @@ def add_callout(title, body, fill="FFF4E6", border="E86B00", title_color=ACCENT)
     _force_run_font(r2, size=10.5, color=NAVY)
 
 # =====================================================================
-# CABEÇALHO — TÍTULO EM TEXTO (sem fundo)
+# HEADER - TEXT TITLE (no background)
 # =====================================================================
 p_title = doc.add_paragraph(style='Title')
 p_title.paragraph_format.space_before = Pt(0)
@@ -231,7 +231,7 @@ r_period = p_period.add_run("Período: 27 de Fevereiro a 27 de Março de 2025   
 _force_run_font(r_period, size=11, color=GRAY)
 
 # =====================================================================
-# RESUMO DO MÊS — Heading 2 (aparece no sumario)
+# MONTHLY SUMMARY - Heading 2 (appears in table of contents)
 # =====================================================================
 add_h2("Resumo do Mês", size=15, after=8)
 
@@ -257,7 +257,7 @@ add_kpi_row([
 doc.add_paragraph().paragraph_format.space_after = Pt(2)
 
 # =====================================================================
-# 1. PERFORMANCE — COMPARATIVO LIMPO
+# 1. PERFORMANCE - CLEAN COMPARISON
 # =====================================================================
 add_h3("1. Performance — Comparativo Mensal")
 
@@ -284,7 +284,7 @@ add_callout(
 )
 
 # =====================================================================
-# 2. AÇÕES REALIZADAS NO MÊS
+# 2. ACTIONS COMPLETED THIS MONTH
 # =====================================================================
 add_h3("2. Ações Realizadas no Mês")
 
@@ -296,7 +296,7 @@ add_bullet("Acompanhamento do desempenho por dispositivo, com mobile mantido com
 add_bullet("Cruzamento contínuo dos leads com a planilha compartilhada para validar o ROI real e a qualidade dos contatos recebidos.", bold_prefix="Tracking de ROI — ")
 
 # =====================================================================
-# 3. CONCORRÊNCIA — DESTAQUE POSITIVO
+# 3. COMPETITION - POSITIVE HIGHLIGHT
 # =====================================================================
 add_h3("3. Posicionamento no Leilão")
 
@@ -332,7 +332,7 @@ add_callout(
 )
 
 # =====================================================================
-# 4. DESEMPENHO POR REGIÃO
+# 4. PERFORMANCE BY REGION
 # =====================================================================
 add_h3("4. Desempenho por Região (Counties)")
 
@@ -360,7 +360,7 @@ add_table_data(
 )
 
 # =====================================================================
-# 5. PLANO PARA MAIO
+# 5. MAY PLAN
 # =====================================================================
 add_h3("5. Plano de Otimização para Maio")
 
@@ -393,7 +393,7 @@ add_table_data(
 )
 
 # =====================================================================
-# 6. REALOCAÇÃO DE VERBA
+# 6. BUDGET REALLOCATION
 # =====================================================================
 add_h3("6. Realocação de Verba — Mantendo US$ 60/dia")
 
@@ -418,7 +418,7 @@ add_callout(
 )
 
 # =====================================================================
-# 7. OBSERVAÇÕES — VALORIZAÇÃO DA QUALIDADE DOS LEADS
+# 7. NOTES - EMPHASIS ON LEAD QUALITY
 # =====================================================================
 add_h3("7. Observações Estratégicas")
 
@@ -447,7 +447,7 @@ add_body(
 )
 
 # =====================================================================
-# RODAPÉ
+# FOOTER
 # =====================================================================
 doc.add_paragraph().paragraph_format.space_after = Pt(8)
 

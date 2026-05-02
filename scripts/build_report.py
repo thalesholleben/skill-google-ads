@@ -1,4 +1,4 @@
-"""Gera o relatorio interno mensal em .docx — exemplo de layout completo (10 seções)."""
+"""Generate the internal monthly .docx report - complete 10-section layout example."""
 from docx import Document
 from docx.shared import Pt, RGBColor, Cm, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -6,25 +6,25 @@ from docx.enum.table import WD_ALIGN_VERTICAL, WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
-# ============= PALETA =============
-NAVY = RGBColor(0x0F, 0x2A, 0x47)        # Azul-marinho titulos
-ACCENT = RGBColor(0xE8, 0x6B, 0x00)       # Laranja destaque
-GREEN = RGBColor(0x1F, 0x8A, 0x4E)        # Verde positivo
-RED = RGBColor(0xC2, 0x39, 0x2C)          # Vermelho negativo
-GRAY = RGBColor(0x4B, 0x55, 0x63)         # Cinza texto secundario
-LIGHT_GRAY = RGBColor(0xE8, 0xEC, 0xF1)   # Cinza claro fundo
+# ============= PALETTE =============
+NAVY = RGBColor(0x0F, 0x2A, 0x47)        # Navy titles
+ACCENT = RGBColor(0xE8, 0x6B, 0x00)       # Orange accent
+GREEN = RGBColor(0x1F, 0x8A, 0x4E)        # Positive green
+RED = RGBColor(0xC2, 0x39, 0x2C)          # Negative red
+GRAY = RGBColor(0x4B, 0x55, 0x63)         # Secondary text gray
+LIGHT_GRAY = RGBColor(0xE8, 0xEC, 0xF1)   # Light background gray
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 
 doc = Document()
 
-# Margens
+# Margins
 for section in doc.sections:
     section.top_margin = Cm(2.0)
     section.bottom_margin = Cm(2.0)
     section.left_margin = Cm(2.0)
     section.right_margin = Cm(2.0)
 
-# Fonte default
+# Default font
 style = doc.styles['Normal']
 style.font.name = 'Calibri'
 style.font.size = Pt(11)
@@ -65,7 +65,7 @@ def add_h2(text, color=NAVY, size=14, after=4):
     run.bold = True
     run.font.size = Pt(size)
     run.font.color.rgb = color
-    # linha sutil abaixo do titulo (via borda inferior)
+    # Subtle line below the title, implemented as a bottom border.
     p_pr = p._p.get_or_add_pPr()
     p_borders = OxmlElement('w:pBdr')
     bottom = OxmlElement('w:bottom')
@@ -104,7 +104,7 @@ def add_bullet(text, bold_prefix=None):
     return p
 
 def add_kpi_row(items):
-    """Cria uma linha de cards de KPI: items = [(label, value, delta, color), ...]"""
+    """Create one row of KPI cards: items = [(label, value, delta, color), ...]."""
     table = doc.add_table(rows=1, cols=len(items))
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.autofit = False
@@ -113,7 +113,7 @@ def add_kpi_row(items):
         shade(cell, "F4F6F9")
         set_cell_borders(cell, "D5DBE3", "4")
         cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
-        # zera o paragrafo default
+        # Reset the default paragraph spacing.
         cell.paragraphs[0].paragraph_format.space_after = Pt(0)
         # label
         p_label = cell.paragraphs[0]
@@ -184,7 +184,7 @@ def add_table_data(headers, rows, col_widths=None, header_color="0F2A47", first_
     return table
 
 def add_callout(title, body, accent=ACCENT):
-    """Caixa de destaque: 1 linha com cor de fundo e texto."""
+    """Callout box: one row with background color and text."""
     table = doc.add_table(rows=1, cols=1)
     cell = table.cell(0, 0)
     shade(cell, "FFF4E6")
@@ -204,10 +204,10 @@ def add_callout(title, body, accent=ACCENT):
     r2.font.color.rgb = NAVY
 
 # =====================================================================
-# CABEÇALHO / CAPA
+# HEADER / COVER
 # =====================================================================
 
-# tarja superior
+# Top band
 header_table = doc.add_table(rows=1, cols=1)
 header_cell = header_table.cell(0, 0)
 shade(header_cell, "0F2A47")
@@ -236,7 +236,7 @@ r3.font.size = Pt(11)
 doc.add_paragraph().paragraph_format.space_after = Pt(2)
 
 # =====================================================================
-# RESUMO EXECUTIVO
+# EXECUTIVE SUMMARY
 # =====================================================================
 add_h1("Resumo Executivo", size=18, after=8)
 
@@ -261,7 +261,7 @@ add_kpi_row([
 doc.add_paragraph().paragraph_format.space_after = Pt(2)
 
 # =====================================================================
-# 1. PERFORMANCE — TABELA COMPARATIVA
+# 1. PERFORMANCE - COMPARISON TABLE
 # =====================================================================
 add_h2("1. Performance — Comparativo com o Mês Anterior")
 
@@ -289,7 +289,7 @@ add_callout(
 )
 
 # =====================================================================
-# 2. ANÁLISE POR DIMENSÃO (DISPOSITIVO + DIA)
+# 2. DIMENSION ANALYSIS (DEVICE + DAY)
 # =====================================================================
 add_h2("2. Análise por Dimensão")
 
@@ -326,7 +326,7 @@ add_table_data(
 )
 
 # =====================================================================
-# 3. DESEMPENHO POR CONDADO
+# 3. PERFORMANCE BY COUNTY
 # =====================================================================
 add_h2("3. Desempenho por Condado — Visão Consolidada")
 
@@ -356,7 +356,7 @@ add_callout(
 )
 
 # =====================================================================
-# 4. CONCORRÊNCIA — AUCTION INSIGHTS
+# 4. COMPETITION - AUCTION INSIGHTS
 # =====================================================================
 add_h2("4. Concorrência — Auction Insights")
 
@@ -389,7 +389,7 @@ add_body(
 )
 
 # =====================================================================
-# 5. TERMOS DE PESQUISA & PALAVRAS-CHAVE
+# 5. SEARCH TERMS & KEYWORDS
 # =====================================================================
 add_h2("5. Termos de Pesquisa & Negativas")
 
@@ -440,7 +440,7 @@ add_callout(
 )
 
 # =====================================================================
-# 6. O QUE FOI FEITO NO MÊS
+# 6. WORK COMPLETED THIS MONTH
 # =====================================================================
 add_h2("6. O Que Foi Feito no Mês")
 
@@ -451,7 +451,7 @@ add_bullet("Revisão de extensões de chamada e callouts ativos durante o horár
 add_bullet("Monitoramento contínuo de leads via planilha de cruzamento com o cliente para validar ROI real.", bold_prefix="Tracking — ")
 
 # =====================================================================
-# 7. O QUE PUXOU O RESULTADO
+# 7. WHAT DROVE THE RESULT
 # =====================================================================
 add_h2("7. O Que Puxou o Resultado")
 
@@ -461,7 +461,7 @@ add_bullet("Conversões diluídas em condados secundários (Osceola, Polk e Pasc
 add_bullet("Volusia ainda gerando custo após pedido de remoção do cliente em Fevereiro.", bold_prefix="Falha pontual — ")
 
 # =====================================================================
-# 8. PLANO DE AÇÃO — MAIO
+# 8. ACTION PLAN - MAY
 # =====================================================================
 add_h2("8. Plano de Ação para Maio")
 
@@ -499,7 +499,7 @@ add_table_data(
 )
 
 # =====================================================================
-# 9. REALOCAÇÃO DE VERBA
+# 9. BUDGET REALLOCATION
 # =====================================================================
 add_h2("9. Realocação de Verba — Mantendo US$ 60/dia")
 
@@ -528,7 +528,7 @@ add_callout(
 )
 
 # =====================================================================
-# 10. ALINHAMENTO COM O CLIENTE
+# 10. CLIENT ALIGNMENT
 # =====================================================================
 add_h2("10. Alinhamento com o Cliente")
 
@@ -554,7 +554,7 @@ add_body(
 )
 
 # =====================================================================
-# RODAPÉ
+# FOOTER
 # =====================================================================
 doc.add_paragraph().paragraph_format.space_after = Pt(8)
 
