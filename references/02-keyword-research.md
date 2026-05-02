@@ -1,105 +1,105 @@
-# 02 — Keyword Research e Match Types em 2026
+# 02 - Keyword Research and Match Types in 2026
 
-> Carregue este arquivo quando o usuário pedir pesquisa de keywords, mapeamento de intenção, decisão de match types, análise de search terms ou negativas avançadas.
-
----
-
-## 1. Princípio fundamental — Google Ads roda em INTENÇÃO, não em palavra
-
-Em 2026, todos os match types operam em **intent matching**:
-
-- **Exact** match: cobre a query exata + variantes com mesmo significado (sinônimos, ordem trocada, termos implícitos).
-- **Phrase** match: cobre paráfrases que carregam o mesmo significado da frase (mesmo com palavras antes/depois ou ordem ligeiramente diferente).
-- **Broad** match: usa o keyword como ponto de partida + landing page + ad copy + signals do Smart Bidding para encontrar queries relevantes — pode estar muito longe do termo literal.
-
-**Implicação prática:** keywords não delimitam mais o tráfego. **Negativas + Smart Bidding + landing page é o que delimita.**
+> Load this file when the user asks for keyword research, intent mapping, match type decisions, search term analysis, or advanced negative keywords.
 
 ---
 
-## 2. Intent Mapping — o framework
+## 1. Core principle - Google Ads runs on INTENT, not words
 
-Antes de listar keywords, mapeie **estágios de jornada**. Isso define:
-- Qual campanha cada keyword pertence.
-- Qual landing page.
-- Qual lance e mensagem.
+In 2026, all match types operate through **intent matching**:
 
-### Os 4 estágios (B2B / lead gen)
+- **Exact** match: covers the exact query plus variants with the same meaning, including synonyms, reordered words, and implied terms.
+- **Phrase** match: covers paraphrases that carry the same meaning as the phrase, even with words before/after or slightly different order.
+- **Broad** match: uses the keyword as a starting point plus landing page, ad copy, and Smart Bidding signals to find relevant queries - sometimes far from the literal term.
 
-| Estágio | Como o user pesquisa | Volume | CPA esperado |
+**Practical implication:** keywords no longer strictly define traffic. **Negatives + Smart Bidding + landing page define traffic boundaries.**
+
+---
+
+## 2. Intent Mapping - the framework
+
+Before listing keywords, map **journey stages**. This defines:
+- Which campaign each keyword belongs to.
+- Which landing page.
+- Which bid and message.
+
+### The 4 stages for B2B / lead gen
+
+| Stage | How the user searches | Volume | Expected CPA |
 |---|---|---|---|
-| **Problem-aware** | "como motivar time remoto", "produtividade caindo" | Alto | Alto (longo path-to-conv) |
-| **Solution-aware** | "ferramenta de gestão de projetos", "software de PM" | Médio-Alto | Médio |
-| **Product-aware** | "Asana vs Monday", "best Kanban tool 2026" | Médio | Médio-Baixo |
-| **Brand-aware** | "[brand]", "[brand] login", "[brand] pricing" | Baixo (mas convertem) | Baixíssimo |
+| **Problem-aware** | "how to motivate remote team", "productivity dropping" | High | High: long path to conversion |
+| **Solution-aware** | "project management tool", "PM software" | Medium-high | Medium |
+| **Product-aware** | "Asana vs Monday", "best Kanban tool 2026" | Medium | Medium-low |
+| **Brand-aware** | "[brand]", "[brand] login", "[brand] pricing" | Low, but converts | Very low |
 
-### Os 3 estágios (e-commerce)
+### The 3 stages for e-commerce
 
-| Estágio | Como o user pesquisa | Match |
+| Stage | How the user searches | Match |
 |---|---|---|
 | **Discovery** | "best running shoes for flat feet" | Phrase + Broad |
 | **Comparison** | "Nike Pegasus 41 vs Brooks Ghost 16" | Exact + Phrase |
 | **Transactional** | "Nike Pegasus 41 size 10 buy" | Exact |
 
-### Erro comum
+### Common mistake
 
-Misturar estágios no mesmo ad group → uma única RSA tenta servir intenções diferentes → relevância e CTR caem → QS cai → CPC sobe.
+Mixing stages in the same ad group -> one RSA tries to serve different intents -> relevance and CTR drop -> QS drops -> CPC rises.
 
-**Regra**: 1 estágio por ad group (STAG); copy e landing alinhados àquele estágio.
+**Rule**: 1 stage per ad group (STAG); align copy and landing page to that stage.
 
 ---
 
-## 3. Process de Keyword Research
+## 3. Keyword research process
 
-### Step 1 — Seed list
+### Step 1 - Seed list
 
-Colete de 5 fontes:
+Collect from 5 sources:
 
-1. **Brainstorm interno**: 20–30 termos que você usaria.
-2. **Site do cliente**: extrair títulos, h2, listas de produto.
-3. **Site dos concorrentes** (top 3): mesma extração + diferenciais que eles destacam.
-4. **Search terms já reais**: se existe conta com 30+ dias, mine os search terms convertendo.
-5. **Customer service / vendas**: que perguntas chegam? que dores os clientes mencionam?
+1. **Internal brainstorm**: 20-30 terms you would use.
+2. **Client site**: extract titles, H2s, product lists.
+3. **Competitor sites** (top 3): same extraction plus differentiators they highlight.
+4. **Real search terms**: if an account has 30+ days of history, mine converting search terms.
+5. **Customer service / sales**: what questions arrive? What pains do customers mention?
 
-### Step 2 — Expand
+### Step 2 - Expand
 
-- **Google Keyword Planner**: filtrar por volume mensal, competição, faixa de CPC. Marcar keywords com volume 100–10.000 (sweet spot).
-- **Search com `*`** (wildcard): "best * software for [vertical]" gera ideias.
-- **Google "People Also Ask"** + autocomplete: pegar perguntas longas (long-tail).
+- **Google Keyword Planner**: filter by monthly volume, competition, CPC range. Flag keywords with 100-10,000 volume as the sweet spot.
+- **Search with `*` wildcard**: "best * software for [vertical]" generates ideas.
+- **Google People Also Ask + autocomplete**: collect long-tail questions.
 - **AnswerThePublic**: question-based queries.
-- **Concorrentes via SEMrush/Ahrefs**: keywords que pagam (Top Paid Keywords).
-- **AI tools**: Claude/ChatGPT — peça "gere 30 keywords problem-aware para X com volume estimado".
+- **Competitors through SEMrush/Ahrefs**: paid keywords they buy.
+- **AI tools**: ask Claude/ChatGPT to generate 30 problem-aware keywords for X with estimated volume.
 
-### Step 3 — Cluster por intent + tema
+### Step 3 - Cluster by intent + theme
 
-Use planilha. Para cada keyword:
+Use a spreadsheet. For each keyword:
 
-| Coluna | Exemplo |
+| Column | Example |
 |---|---|
 | Keyword | "kanban software for small teams" |
-| Volume | 1.200/mês |
-| CPC est. | US$ 4,50 |
+| Volume | 1,200/month |
+| Est. CPC | $4.50 |
 | Intent | Solution-aware |
-| Tema | Kanban |
-| Match sugerida | Phrase |
+| Theme | Kanban |
+| Suggested match | Phrase |
 | Landing | /kanban-tool |
 
-Agrupe por **(Intent, Tema)** → cada grupo vira um ad group.
+Group by **(Intent, Theme)** -> each group becomes an ad group.
 
-### Step 4 — Decidir match types por keyword
+### Step 4 - Decide match types by keyword
 
-Use a lógica abaixo (não a "lei geral"):
+Use this logic, not a generic rule:
 
+```text
+IF keyword is brand -> Exact for defense
+IF keyword has 30+ conversions with good CPA -> Exact to consolidate
+IF medium volume + strong intent -> Phrase as growth engine
+IF high volume + generic intent + mature Smart Bidding + budget -> Broad for discovery
+IF low volume (< 50/month) + long tail -> Phrase or Broad in discovery campaign
 ```
-SE keyword é brand → Exact (defesa)
-SE keyword tem 30+ conv com bom CPA → Exact (consolidar)
-SE volume médio + intent forte → Phrase (motor de growth)
-SE volume alto + intenção genérica + Smart Bidding maduro + budget → Broad (discovery)
-SE volume baixo (< 50/mês) + cauda longa → Phrase ou Broad em campanha discovery
-```
 
-### Step 5 — Negative seeds (lista inicial)
+### Step 5 - Negative seeds
 
-Antes de lançar, prepare negativas óbvias:
+Before launch, prepare obvious negatives:
 
 ```yaml
 universal_negatives:
@@ -107,17 +107,17 @@ universal_negatives:
   - download, torrent, crack, pdf
   - jobs, job, vagas, salary, salário
   - tutorial, courses, course, training, certification
-  - DIY, "how to do" (depende do contexto)
-  - reviews (se você não quer ser comparado)
-  - meaning, definition, what is (top of funnel sem intenção)
-  - reddit, quora, forum (busca de opinião, não compra)
-  - alternativas (se você é o líder, ou positiva se você é challenger)
-  
+  - DIY, "how to do" # context-dependent
+  - reviews # if you do not want comparison traffic
+  - meaning, definition, what is # top of funnel without intent
+  - reddit, quora, forum # opinion-seeking, not buying
+  - alternatives # negative if you are the leader; positive if challenger
+
 ecommerce_specific:
   - used, segunda mão, refurbished
-  - cheap, barato (a menos que seja seu posicionamento)
-  - vs (a menos que esteja em comparison campaign)
-  
+  - cheap, barato # unless this is your positioning
+  - vs # unless this is a comparison campaign
+
 b2b_specific:
   - student, estudante
   - personal use, individual
@@ -125,192 +125,192 @@ b2b_specific:
 
 local_services_specific:
   - DIY, tutorial, video, youtube
-  - rental, locação (se você é venda)
+  - rental, locação # if you sell/service, not rent
   - course, certification
 ```
 
 ---
 
-## 4. Match Types — manual avançado 2026
+## 4. Match Types - advanced 2026 manual
 
 ### Exact Match `[keyword]`
 
-**Quando usar:**
-- Keywords-rainha provadas (10+ conversões com bom CPA).
-- Brand defense (`[brand]`, `[brand login]`).
-- Casos de altíssimo volume + alto CPC onde precisamos de teto.
+**When to use:**
+- Proven queen keywords: 10+ conversions with good CPA.
+- Brand defense: `[brand]`, `[brand login]`.
+- Very high-volume + high-CPC cases where a ceiling is required.
 
-**Risco:** mesmo exact pega close variants. Monitorar search terms semanalmente para variantes ruins.
+**Risk:** even exact catches close variants. Monitor search terms weekly for bad variants.
 
 ### Phrase Match `"keyword"`
 
-**Quando usar:**
-- Motor principal de growth na maioria das contas.
-- Volume médio + intenção razoavelmente clara.
-- Quando ainda não tem dados suficientes para promover para exact.
+**When to use:**
+- Main growth engine for most accounts.
+- Medium volume + reasonably clear intent.
+- When there is not enough data to promote to exact.
 
-**Boa prática 2026:**
-- Pareie phrase + Smart Bidding (tCPA/tROAS) com 30–50 conv na campanha.
-- Use múltiplas phrase variations em vez de uma exact.
+**2026 best practice:**
+- Pair phrase + Smart Bidding (tCPA/tROAS) with 30-50 conversions in the campaign.
+- Use multiple phrase variations instead of one exact keyword.
 
 ### Broad Match `keyword`
 
-**Pré-requisitos rigorosos antes de ativar:**
-- ✅ Tracking sólido (Enhanced Conversions ON, conversões primárias bem definidas).
-- ✅ 50–100 conversões/mês na campanha.
-- ✅ Smart Bidding maduro (tCPA/tROAS rodando há 30+ dias).
-- ✅ Capacidade de revisar search terms semanalmente (broad gera muito ruído).
-- ✅ Lista robusta de negativas (mínimo 50–100 negativas iniciais).
+**Strict prerequisites before enabling:**
+- Solid tracking: Enhanced Conversions ON, primary conversions well defined.
+- 50-100 conversions/month in the campaign.
+- Mature Smart Bidding: tCPA/tROAS running for 30+ days.
+- Ability to review search terms weekly; broad creates noise.
+- Robust negative list: at least 50-100 initial negatives.
 
-**Sem esses pré-requisitos**, broad vira escoadouro de budget. Com eles, broad vira a maior fonte de descoberta da conta.
+**Without these prerequisites**, broad becomes a budget drain. With them, broad becomes the account's largest discovery source.
 
-### Tabela de decisão rápida
+### Quick decision table
 
-| Cenário | Match recomendada |
+| Scenario | Recommended match |
 |---|---|
-| Conta nova, sem dados, lead gen | Phrase + Exact (50/50) |
-| Conta nova, e-commerce com Shopping | Phrase + Broad (após 30d com Shopping ativo) |
-| Conta madura, 100+ conv/mês, tCPA estável | Phrase principal + Exact rainha + Broad em campanha discovery separada |
-| Brand campaign | Exact + Phrase (do nome da marca + termos genéricos) |
-| Competitor campaign | Phrase (nome do competidor) — NUNCA exact (Google penaliza, e o user não quer o competidor literal) |
-| Lançamento de produto novo | Exact + Phrase, sem Broad (Smart Bidding ainda não tem dados) |
+| New account, no data, lead gen | Phrase + Exact, 50/50 |
+| New account, e-commerce with Shopping | Phrase + Broad after 30d with Shopping active |
+| Mature account, 100+ conv/month, stable tCPA | Phrase as main, exact queens, broad in separate discovery campaign |
+| Brand campaign | Exact + Phrase for brand name and generic brand terms |
+| Competitor campaign | Phrase on competitor name - NEVER exact |
+| New product launch | Exact + Phrase, no Broad because Smart Bidding has no data yet |
 
 ---
 
-## 5. N-gram analysis — método sistemático para search terms
+## 5. N-gram analysis - systematic search term method
 
-### O que é
+### What it is
 
-Em vez de revisar search terms um a um (impossível em escala), você quebra cada query em **fragments** de 1, 2 e 3 palavras (1-grams, 2-grams, 3-grams) e agrega métricas por fragmento.
+Instead of reviewing search terms one by one, which is impossible at scale, break each query into **1-, 2-, and 3-word fragments** (1-grams, 2-grams, 3-grams) and aggregate metrics by fragment.
 
-**Por quê:** o "free" em "free download project management software" não aparece junto com "best free PM tools". Mas o **token "free"** soma gasto/conv/CTR de **todas** as queries que o contêm.
+**Why:** "free" in "free download project management software" does not appear together with "best free PM tools". But the **token "free"** aggregates spend/conversions/CTR across **all** queries that contain it.
 
-### Como rodar
+### How to run it
 
-**Passo 1**: exportar search terms report do Google Ads — janela 30–90 dias, todos os search terms da conta. Salvar em CSV.
+**Step 1**: export the Google Ads search terms report - 30-90 day window, all account search terms. Save as CSV.
 
-**Passo 2**: rodar o script `scripts/n_gram_analysis.py` (incluído nesta skill). Output:
-- Tabela de 1-grams ordenada por gasto, com Conv, CPA, CTR.
-- Tabela de 2-grams.
-- Tabela de 3-grams.
+**Step 2**: run `scripts/n_gram_analysis.py` included in this skill. Output:
+- 1-gram table sorted by spend, with Conv, CPA, CTR.
+- 2-gram table.
+- 3-gram table.
 
-**Passo 3**: identificar n-grams de **alto gasto e zero conversões** → candidatos a negative.
+**Step 3**: identify n-grams with **high spend and zero conversions** -> negative candidates.
 
-**Passo 4**: identificar n-grams de **alto CTR e ótimo CPA** → candidatos a promover para exact match em ad group dedicado.
+**Step 4**: identify n-grams with **high CTR and great CPA** -> candidates to promote to exact match in a dedicated ad group.
 
-### Heurísticas para decisão
+### Decision heuristics
 
-| Padrão | Ação |
+| Pattern | Action |
 |---|---|
-| 1-gram com >US$ 50 gasto e 0 conv | Add como negative (se não for vital) |
-| 1-gram com CPA 3x acima da média | Investigar; provavelmente negative |
-| 2-gram com 5+ conv e CPA < média | Promover para exact em ad group focado |
-| 3-gram com 10+ search distintas e bom CTR | Promover para keyword exata (alta intenção provada) |
+| 1-gram with >$50 spend and 0 conv | Add as negative if not vital |
+| 1-gram with CPA 3x above average | Investigate; likely negative |
+| 2-gram with 5+ conv and CPA below average | Promote to exact in focused ad group |
+| 3-gram with 10+ distinct searches and good CTR | Promote to exact keyword: proven high intent |
 
-### Frequência recomendada
+### Recommended cadence
 
-- Contas pequenas (< US$ 1k/mês): mensal.
-- Contas médias (US$ 1–10k/mês): quinzenal.
-- Contas grandes (> US$ 10k/mês): semanal.
+- Small accounts (< $1k/month): monthly.
+- Mid-size accounts ($1-10k/month): every two weeks.
+- Large accounts (> $10k/month): weekly.
 
-### Limites e cuidados
+### Limits and cautions
 
-- N-grams ignoram **contexto** ("free shipping" vs "free download"). Sempre revise top hits manualmente antes de adicionar negative.
-- 1-grams são potentes mas perigosos — uma negative de 1 palavra pode bloquear muito mais do que você imaginou. Use match type `phrase` ou `exact` na negative para limitar (ex: negative phrase "free trial" só bloqueia onde aparecem juntas).
+- N-grams ignore **context**: "free shipping" vs "free download". Always review top hits manually before adding a negative.
+- 1-grams are powerful but dangerous - a one-word negative can block much more than expected. Use phrase or exact match on negatives to limit impact, for example negative phrase `"free trial"` only blocks terms where the words appear together.
 
 ---
 
-## 6. Negative Keywords — estratégia avançada 2026
+## 6. Negative Keywords - advanced 2026 strategy
 
-### Principais mudanças 2026
+### Main 2026 changes
 
-- **Limite expandido** (mar/2026): **10.000 keywords/campanha** e **10.000/ad group** (antes 5.000).
-- **Account-Level Placement Exclusions** (jan/2026): bloquear sites/apps/canais YouTube em **todos os campaign types** (incluindo PMax e Demand Gen) de uma lista centralizada. Use para combater MFA (Made-for-Advertising) e mobile game spam.
-- **Account-level negatives** continuam aplicando a Search/Shopping; para PMax/Demand Gen, use Brand Lists, Negative Keyword Lists at account level (recém-disponível para PMax) e exclusões de placement.
+- **Expanded limit** (Mar/2026): **10,000 keywords per campaign** and **10,000 per ad group** (previously 5,000).
+- **Account-Level Placement Exclusions** (Jan/2026): block sites/apps/YouTube channels across **all campaign types**, including PMax and Demand Gen, from a centralized list. Use this to fight MFA (Made-for-Advertising) and mobile game spam.
+- **Account-level negatives** still apply to Search/Shopping; for PMax/Demand Gen, use Brand Lists, Negative Keyword Lists at account level now available for PMax, and placement exclusions.
 
-### Hierarquia de negativas
+### Negative hierarchy
 
+```text
+Account level         -> universal: free, jobs, salary, etc.
+  |
+Negative Keyword List -> reusable, shared across campaigns
+  |
+Campaign level        -> campaign-type specific
+  |
+Ad Group level        -> cross-pollination between groups
 ```
-Account level         → universal (free, jobs, salary, etc)
-  ↓
-Negative Keyword List → reusável, share entre campaigns
-  ↓
-Campaign level        → específico do tipo de campanha
-  ↓
-Ad Group level        → cross-pollination entre groups (ex: "free" no group de paid, "premium" no free)
-```
 
-### Listas que toda conta deveria ter
+### Lists every account should have
 
-1. **Universal Negatives** (account level): jobs, salary, free, download, torrent, crack, pdf, tutorial, course, certification, reddit, forum, what is, meaning, definition.
-2. **Brand Defense** (account level): marcas concorrentes que você NÃO quer comprar (e vice-versa, se for protetivo).
-3. **Cross-Pollination List** (ad-group level): impede que keyword do ad group A capture queries do ad group B.
-4. **Vertical-Specific Negatives**: termos da indústria que sinalizam não-compra (ex: legal — "lawyer near me free" se você é firma paga; saúde — "home remedy" se você é medicamento).
+1. **Universal Negatives** at account level: jobs, salary, free, download, torrent, crack, pdf, tutorial, course, certification, reddit, forum, what is, meaning, definition.
+2. **Brand Defense** at account level: competitor brands you do NOT want to buy, and the inverse when protecting your brand.
+3. **Cross-Pollination List** at ad group level: prevents ad group A keywords from capturing ad group B queries.
+4. **Vertical-Specific Negatives**: industry terms that signal non-buying intent, such as legal "lawyer near me free" if you are a paid firm, or healthcare "home remedy" if you sell medication.
 
 ### N-gram-driven negatives
 
-Após cada n-gram analysis, gere **lote de negatives** e adicione **em batch** via Google Ads Editor (mais rápido que UI uma a uma).
+After every n-gram analysis, generate a **batch of negatives** and add it **in bulk** through Google Ads Editor. It is faster than the UI one by one.
 
 ---
 
-## 7. Search Query Report (SQR) Mining — workflow
+## 7. Search Query Report (SQR) Mining - workflow
 
-Workflow recomendado para mineração eficiente:
+Recommended workflow for efficient mining:
 
-### 1. Promover top performers
-- Search terms com **5+ conversões** e CPA abaixo da média → adicionar como **exact match** no ad group dedicado.
-- Search terms com **alta CR + bom CPA + volume** → criar ad group novo se ainda não existe.
+### 1. Promote top performers
+- Search terms with **5+ conversions** and CPA below average -> add as **exact match** in a dedicated ad group.
+- Search terms with **high CR + good CPA + volume** -> create a new ad group if one does not exist.
 
-### 2. Negativar bottom performers
-- Gasto > 3× CPA-alvo, sem conversão → negative immediate.
-- Gasto > 10× CPA-alvo, 0 conv → 100% negative (sem dúvida).
+### 2. Negative bottom performers
+- Spend > 3x target CPA with no conversion -> immediate negative.
+- Spend > 10x target CPA with 0 conversions -> 100% negative, no debate.
 
-### 3. Identificar gaps
-- Search terms com **alto impr. share** mas **0 clique** → problema de copy/relevância (a query bate, mas o ad não convence).
-- Search terms com **clique mas 0 conv** → problema de landing page ou intent mismatch (a query promete algo que a landing não entrega).
+### 3. Identify gaps
+- Search terms with **high impression share** but **0 clicks** -> copy/relevance problem: the query matches, but the ad does not convince.
+- Search terms with **clicks but 0 conversions** -> landing page problem or intent mismatch: the query promises something the landing page does not deliver.
 
-### 4. Detectar shifts de intenção
-- Aparece uma query nova ganhando volume mês a mês? → tendência. Pode virar campanha dedicada.
-- Query histórica perdeu volume? → competidor mudou estratégia, ou demanda caiu (ver Trends).
+### 4. Detect intent shifts
+- A new query appears and gains volume month over month -> trend; may deserve a dedicated campaign.
+- A historical query lost volume -> competitor strategy changed or demand fell; check Trends.
 
 ---
 
-## 8. Keyword Tools — quando usar cada
+## 8. Keyword tools - when to use each
 
-| Ferramenta | Forte em | Custo |
+| Tool | Strong at | Cost |
 |---|---|---|
-| **Google Keyword Planner** | Volume oficial, CPC range, tendência | Grátis com conta Ads |
-| **SEMrush** | Keywords pagas dos competidores, share of voice | US$ 130+/mês |
-| **Ahrefs** | Difficulty SEO, content gap, organic share | US$ 100+/mês |
-| **AnswerThePublic** | Question-based, long-tail | Grátis (limitado) / US$ 99/mês |
-| **Soovle / Ubersuggest** | Multi-source autocomplete | Grátis / US$ 29/mês |
-| **Claude/ChatGPT** | Brainstorm, clustering, copy generation | API/sub |
+| **Google Keyword Planner** | Official volume, CPC range, trend | Free with Ads account |
+| **SEMrush** | Competitor paid keywords, share of voice | $130+/month |
+| **Ahrefs** | SEO difficulty, content gap, organic share | $100+/month |
+| **AnswerThePublic** | Question-based, long-tail | Free limited / $99/month |
+| **Soovle / Ubersuggest** | Multi-source autocomplete | Free / $29/month |
+| **Claude/ChatGPT** | Brainstorming, clustering, copy generation | API/subscription |
 
-**Regra**: se o cliente já paga SEMrush/Ahrefs, comece por lá (dados de competidor). Se é conta nova / budget pequeno, Keyword Planner + AI é suficiente para começar.
+**Rule**: if the client already pays for SEMrush/Ahrefs, start there for competitor data. For a new or low-budget account, Keyword Planner + AI is enough to start.
 
 ---
 
-## 9. Erros comuns em keyword research (e como evitar)
+## 9. Common keyword research mistakes and fixes
 
-| Erro | Por quê é ruim | Correção |
+| Mistake | Why it is bad | Fix |
 |---|---|---|
-| Listar 200 keywords e jogar em 1 ad group | RSAs ficam genéricos, QS despenca | Cluster em 8–12 STAGs de 5–15 keywords |
-| Só keywords product-aware, ignorar problem-aware | Perde top-of-funnel; conta fica refém da demanda existente | Criar campanha problem-aware separada com landing educacional |
-| Não pesquisar negatives antes de lançar | Primeiras semanas queimam US$ centenas | Lista inicial de 50–100 negatives universais |
-| Confiar 100% em volume do Keyword Planner | Subestima long-tail; agrupa close variants | Validar com search terms reais após 30d |
-| Comprar só keywords de competidor (sem brand) | Competidor compra a sua e você fica vulnerável | Sempre rodar Brand defense |
-| Match type aleatório sem critério | Inconsistência → Smart Bidding sem padrão | Usar tabela de decisão da seção 4 |
+| Listing 200 keywords and putting them into 1 ad group | RSAs become generic, QS collapses | Cluster into 8-12 STAGs with 5-15 keywords |
+| Only product-aware keywords, ignoring problem-aware | Loses top-of-funnel; account depends on existing demand | Create separate problem-aware campaign with educational landing |
+| Not researching negatives before launch | First weeks burn hundreds of dollars | Initial list of 50-100 universal negatives |
+| Trusting Keyword Planner volume 100% | Underestimates long-tail and groups close variants | Validate with real search terms after 30 days |
+| Buying only competitor keywords and no brand | Competitor buys yours and you are exposed | Always run Brand defense |
+| Random match type decisions | Inconsistency -> Smart Bidding cannot learn a pattern | Use the decision table in section 4 |
 
 ---
 
-## 10. Fontes (research 2026)
+## 10. Sources (2026 research)
 
-- [Match Types 2026 — Growth Minded Marketing](https://growthmindedmarketing.com/blog/keyword-match-types/)
-- [Match Types 2026 — Stackmatix](https://www.stackmatix.com/blog/google-ads-keyword-match-types-guide)
-- [Broad Match 2026 Playbook — ATTN Agency](https://www.attnagency.com/blog/google-ads-broad-match-strategy)
-- [Negative Keywords 2026 — Optmyzr](https://www.optmyzr.com/blog/negative-keywords/)
+- [Match Types 2026 - Growth Minded Marketing](https://growthmindedmarketing.com/blog/keyword-match-types/)
+- [Match Types 2026 - Stackmatix](https://www.stackmatix.com/blog/google-ads-keyword-match-types-guide)
+- [Broad Match 2026 Playbook - ATTN Agency](https://www.attnagency.com/blog/google-ads-broad-match-strategy)
+- [Negative Keywords 2026 - Optmyzr](https://www.optmyzr.com/blog/negative-keywords/)
 - [N-gram Analysis Adalysis](https://adalysis.com/blog/n-gram-analysis-the-secret-to-scalable-search-term-management-in-google-ads/)
-- [N-gram Layered — googleadsopenresearch](https://googleadsopenresearch.com/research/advanced-ngram-analysis/)
-- [Account-Level Placement Exclusions — Karooya](https://www.karooya.com/blog/negative-keywords-in-google-ads-2026-are-you-using-them-to-filter-traffic-or-control-it/)
-- [Keyword Research 2026 — SaaS Hero](https://www.saashero.net/google-ppc/google-ads-agency-keyword-research/)
-- [Google Ads runs on intent — Search Engine Land](https://searchengineland.com/google-ads-intent-not-keywords-468271)
+- [N-gram Layered - googleadsopenresearch](https://googleadsopenresearch.com/research/advanced-ngram-analysis/)
+- [Account-Level Placement Exclusions - Karooya](https://www.karooya.com/blog/negative-keywords-in-google-ads-2026-are-you-using-them-to-filter-traffic-or-control-it/)
+- [Keyword Research 2026 - SaaS Hero](https://www.saashero.net/google-ppc/google-ads-agency-keyword-research/)
+- [Google Ads runs on intent - Search Engine Land](https://searchengineland.com/google-ads-intent-not-keywords-468271)
