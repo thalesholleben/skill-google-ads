@@ -1,0 +1,34 @@
+# Claude Code + Codex Google Ads Skill
+
+> Agent-readable Google Ads skill for Claude Code, Codex, and AI coding agents. Covers 2026 strategy, Smart Bidding, AI Max, keyword research, auction analysis, experiments, optimization, GAQL, and report generation.
+
+## Start here
+
+- `README.md`: public overview, installation, topics, and security notes.
+- `SKILL.md`: primary skill entry point and routing logic.
+- `AGENTS.md`: instructions for coding agents working in this repository.
+- `CLAUDE.md`: Claude Code bridge.
+- `.github/copilot-instructions.md`: GitHub Copilot instructions.
+
+## Deep references
+
+- `references/01-strategy.md`: Smart Bidding, AI Max, attribution, audiences.
+- `references/02-keyword-research.md`: intent mapping, match types, n-gram, SQR mining.
+- `references/03-bidding-and-auction.md`: bidding strategies and Auction Insights.
+- `references/04-campaign-creation.md`: campaign setup, RSAs, extensions, negatives.
+- `references/05-ab-testing.md`: experiments and significance.
+- `references/06-optimization-playbook.md`: daily, weekly, monthly optimization and diagnosis.
+- `references/07-reporting-and-gaql.md`: GAQL queries and Google Ads Script templates.
+
+## Local scripts
+
+- `scripts/build_report.py`: internal monthly `.docx` report template.
+- `scripts/build_report_cliente.py`: client-facing `.docx` report template.
+- `scripts/n_gram_analysis.py`: search term n-gram analysis from CSV exports.
+- `scripts/README.md`: script usage.
+
+## Constraints
+
+- This is not a runnable web app, API, or hosted service.
+- Do not commit credentials, customer IDs, account IDs, real search-term exports, or generated client reports.
+- Load `SKILL.md` first, then only the reference file relevant to the user's Google Ads task.

@@ -1,6 +1,6 @@
 ---
 name: google-ads-manager
-description: "Google Ads avançado 2026 — estratégia, Smart Bidding, AI Max, pesquisa de keywords, leilão, A/B testing, criação de campanhas, otimização contínua e relatórios em Python/docx."
+description: "Skill para Claude Code, Codex e agentes de IA: Google Ads avançado 2026 — estratégia, Smart Bidding, AI Max, pesquisa de keywords, leilão, A/B testing, criação de campanhas, otimização contínua e relatórios em Python/docx."
 version: "2.0.0"
 author: community
 license: MIT
@@ -16,6 +16,10 @@ tags:
   - keyword-research
   - auction-insights
   - reporting
+  - gaql
+  - claude-code
+  - codex
+  - ai-agents
 department: Marketing
 
 models:
