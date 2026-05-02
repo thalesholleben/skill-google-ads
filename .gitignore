@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+
+# Google Ads exports and generated reports
+*.csv
+*.xlsx
+*.xls
+*.docx
+ngram_report.csv
+relatorio_interno.docx
+relatorio_cliente.docx
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
