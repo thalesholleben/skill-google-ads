@@ -4,7 +4,7 @@ Advanced Google Ads management skill for Claude Code, Codex, and AI coding agent
 
 Built for 2026: decision-driven, not checklist-driven.
 
-Public repo: https://github.com/thalesholleben/google-ads-manager
+Public repo: https://github.com/thalesholleben/skill-google-ads
 
 ---
 
@@ -81,7 +81,7 @@ google-ads-manager/
 ### Install as a Claude Code skill
 
 ```bash
-git clone https://github.com/thalesholleben/google-ads-manager ~/.claude/skills/google-ads-manager
+git clone https://github.com/thalesholleben/skill-google-ads ~/.claude/skills/google-ads-manager
 ```
 
 Then use it in Claude Code:
@@ -95,7 +95,7 @@ Or reference it in any conversation. Claude should load the skill automatically 
 ### Install as a Codex skill
 
 ```bash
-git clone https://github.com/thalesholleben/google-ads-manager ~/.codex/skills/google-ads-manager
+git clone https://github.com/thalesholleben/skill-google-ads ~/.codex/skills/google-ads-manager
 ```
 
 Then ask Codex for Google Ads strategy, account diagnosis, campaign creation, keyword research, or reporting. The agent should start from `SKILL.md` and load only the relevant reference files.
