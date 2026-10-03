@@ -1,328 +1,177 @@
-# 03 - Bidding Strategies and Auction Insights
+# 03: Auction, Quality Score, bid adjustments and CPC/CPA diagnosis
 
-> Load this file when the user asks about bidding strategy, adjustments, auctions, competition, Auction Insights, or impression share.
+> Load to understand why CPC or CPA moved, read impression share, decide a bid adjustment, a portfolio or a shared
+> budget, or reason about how Target CPA behaves.
 
----
-
-## 1. Quality Score and Ad Rank in depth
-
-### How Ad Rank is calculated in each real-time auction
-
-```text
-Ad Rank = bid x Quality Score signals x extension impact x auction-time signals
-```
-
-**Quality Score signals** visible in the keyword report, while the real score is dynamic:
-1. Expected CTR
-2. Ad relevance
-3. Landing page experience
-
-**Auction-time signals** you do not see but that affect the auction:
-- User device
-- Exact location
-- Time of day
-- User's recent history
-- Match type used
-- Ad formats/extensions shown
-
-### Quality Score weight in account economics
-
-Conservative table, varies by vertical:
-
-| QS | Effective CPC vs QS=10 |
-|---|---|
-| 10 | 1.0x, lowest |
-| 7 | 1.4x |
-| 5 | 2.0x |
-| 3 | 4.0x |
-
-**Moving from QS 5 to QS 7 reduces CPC by about 40%.** In an account spending $20,000/month, that can free $8,000 without increasing budget.
-
-**36% of market keywords in 2026 are at QS <= 5** - this is the easiest money to recover in most audits.
-
-### How to attack each component
-
-#### Expected CTR
-- Rewrite RSAs with **15 diverse headlines**: benefit, feature, social proof, CTA, urgency, differentiator.
-- Ensure the **main ad group keyword appears in headlines** through Dynamic Keyword Insertion or hard-coded text.
-- Pause headlines with low preference or "Low" rating.
-- Ad Strength **Excellent** gives +15% CTR vs Poor according to Google data.
-
-#### Ad Relevance
-- Reduce keywords per ad group when theme diversity is high. **If one ad group contains "kanban" and "gantt chart" keywords, split it into 2.**
-- Put keywords in RSA headlines.
-- Align descriptions with the promise behind the keyword.
-
-#### Landing Page Experience
-- **Speed is #1**: moving from 5s to 2s can lift QS 2-3 points in a few weeks.
-- **Message match**: landing H1 repeats the ad keyword/headline or a close synonym.
-- Mobile-first design, since more than 60% of search traffic is mobile in most verticals.
-- Form above the fold or clear CTA above the fold.
-- No intrusive pop-ups because Core Web Vitals penalize them.
-- HTTPS, privacy policy, visible contact information: trust signals Google evaluates.
-
-### Hidden metric: history
-
-Quality Score **persists over time**. A keyword with 6 months of strong history can tolerate a weak ad for a few weeks; a new keyword is judged mostly on immediate signals.
-
-**Implication**: when migrating a campaign, **prefer reusing the existing campaign** and pausing weak keywords instead of creating a new one from scratch. Otherwise you throw away QS history.
+Sources: `g/NNNN` = `https://support.google.com/google-ads/answer/NNNN`, checked on October 1, 2026.
 
 ---
 
-## 2. Bidding Strategies - choose by context
+## 1. Ad Rank (what decides the auction)
 
-### Decision flowchart
-
-```text
-Does the campaign have >=30 conversions/month?
-|-- No -> Maximize Conversions without cap, or cap at 1.5x target CPA
-|         OR Maximize Clicks if priority is traffic/awareness
-|
-`-- Yes -> Do you have conversion value, either revenue or estimate?
-          |-- No -> Target CPA
-          |         target = current CPA x 1.0 to 1.1
-          |
-          `-- Yes -> Target ROAS
-                    target = current ROAS x 0.9 to start
-```
-
-### Operational details
-
-**Maximize Conversions**
-- Good for starting and leaving the learning phase.
-- Without a cap, it can scale spend from $30/day to $80/day if demand exists.
-- **Always** cap the budget to avoid surprises.
-
-**Maximize Conversions with tCPA cap** as transition
-- Use for 14-30 days between Max Conv and pure tCPA.
-- Cap = 1.3-1.5x the final target CPA.
-
-**Target CPA (tCPA)**
-- Stable after 30+ conversions in 30 days.
-- Gradual ramp: -10% to -15% every 14 days.
-- **Mistake**: dropping tCPA from $50 to $30 in 7 days -> learning reset + volume drop.
-
-**Target ROAS (tROAS)**
-- Requires reliable **value**, not just "it is a conversion".
-- E-commerce: real revenue. Lead gen: average lead value x close probability.
-- Initial target: 90% of current ROAS.
-- More sensitive than tCPA and varies more with seasonality.
-
-**Maximize Clicks**
-- Awareness, top-of-funnel, informational sites.
-- Accepts bid adjustments, unlike most Smart Bidding.
-- No conversion focus.
-
-**Manual CPC**
-- In 2026: only for very specific cases, such as compliance restrictions, bid A/B tests, or accounts with fewer than 10 conversions/month where Smart Bidding lacks data.
-
-### Portfolio Bidding shared strategy
-
-Allows **grouping campaigns** under the same target/strategy. Advantages:
-- Cross-learning: 3 campaigns with 15 conversions each become "45 conversions" for the algorithm.
-- Central management: change 1 target instead of 3.
-- **Can pair with Shared Budget** -> +13% conversions on average according to Google data.
-
-When to use:
-- Multiple campaigns with the same objective and same CPA target.
-- Low individual volume but reasonable combined volume.
-- Multiple geos with similar performance.
-
-### Shared Budgets
-
-One budget for multiple campaigns. Google distributes it by real-time demand.
-
-**When to use:**
-- Campaigns with the same objective and similar targets.
-- You want dynamic allocation without micromanagement.
-
-**When NOT to use:**
-- Campaigns with different objectives, such as Brand vs Non-Brand.
-- When you need to guarantee minimum budget for a specific campaign.
-- Experiments, because it is not compatible.
-- PMax, because it is not compatible.
-
-**Recommended allocation by objective:**
-- 50-60% conversion-focused: Search exact/phrase, RLSA, Shopping.
-- 20-30% prospecting: Search broad, PMax, Demand Gen.
-- 10-20% Brand defense.
+Official factors (`g/1752122`): **bid**; **ad and landing page quality** (assessed in real time, in the auction);
+**Ad Rank thresholds**; **auction competitiveness**; **search context** (location, device, time, terms, other ads);
+**expected impact of assets and formats**. Ad Rank is computed again in every auction. There is no official
+multiplicative formula ("bid x QS x extensions" is a simplification).
 
 ---
 
-## 3. Bid Adjustments - what still works in 2026
+## 2. Quality Score: a diagnostic, not a KPI
 
-### The big truth: Smart Bidding ignores almost everything
+Official (`g/6167118`, `g/6167123`):
+- A 1 to 10 score per keyword, comparing you with advertisers who showed on **the same exact search over the last
+  90 days**. Components: expected CTR, ad relevance, landing page experience.
+- **The 1 to 10 number is not used in the auction**: the auction uses real-time assessments. Google says to use it
+  as a diagnostic and **not to optimize Quality Score as a KPI**.
+- Changing the match type does not change Quality Score.
+- In the API: `ad_group_criterion.quality_info.*` (current score) and `metrics.historical_*_quality_score` (daily,
+  accepts `segments.date`).
 
-In campaigns with tCPA / tROAS / Maximize Conversions:
+Third-party estimate, for order of magnitude only: WordStream (2013) modeled CPC as proportional to 1 / QS, which
+gives QS 7 about **-29%** CPC against QS 5, QS 10 about -50% and QS 3 about +67% (3.3 times the CPC of QS 10). It is
+not a Google number. The "5 to 7 cuts more than 40%" and "36% of keywords have QS 5 or less" that circulate have no
+source.
 
-| Adjustment | Works? |
-|---|---|
-| Device | No, ignored except -100% |
-| Location | No, ignored except -100% |
-| Demographic | No, ignored except -100% |
-| Audience | No, Smart Bidding already sees it |
-| Ad Schedule / dayparting | No, ignored |
+How to move each component (what moves the real-time assessment):
+- **Expected CTR:** headlines with the ad group's keyword and different angles; 2 good RSAs per ad group (04,
+  section 5).
+- **Relevance:** one theme per ad group; if the keywords ask for different texts, they are two ad groups.
+- **Landing page:** speed, the same message as the ad, a visible form or button, trust signals. Landing page
+  experience is not fixed in the ad.
 
-### What still works
-
-1. **Exclusion (-100%)**: fully blocks the segment. Useful for:
-   - Excluding mobile when the landing page is desktop-only.
-   - Excluding geos you do not serve.
-   - Excluding audiences such as current customers from acquisition.
-
-2. **Bid Adjustments in Maximize Clicks / Manual CPC**: here they still work normally.
-
-3. **Location targeting with different targets**: create 2 identical campaigns for 2 geos with different tCPA targets. **This gives real granular CPA control by geo.**
-
-### Implication
-
-Do not waste time configuring "+20% mobile, -15% night, +10% female 25-34" in Smart Bidding campaigns. **All of that is ignored noise.**
-
-### Structure as bid adjustment
-
-The 2026 way to "adjust bid by geo" is:
-
-```text
-Before (legacy):
-1 campaign, target Florida + Orlando bid +30%
-
-Now (2026):
-Campaign A: target only Orlando, tCPA $40
-Campaign B: target Florida excluding Orlando, tCPA $60
-```
-
-This gives real control. Same principle applies to device, geo, and daypart.
+**Quality Score 1 on several keywords of one ad group is usually structure, not bid.** Typical pattern: one ad
+written for a couple dozen themes, a generic headline pinned in position 1, and a landing page that never uses the
+search term, while the first-page bid estimate sits far above the bid. The order is: ad groups by theme with
+headlines of the theme and the term written on the page; raising the bid first buys the same Quality Score at a
+higher price.
 
 ---
 
-## 4. Auction Insights - complete reading
+## 3. Choosing a bidding strategy
 
-### Metrics explained
-
-#### Impression Share (IS)
-
-```text
-IS = impressions received / eligible impressions
+```
+Does the primary conversion measure what matters? (01, section 7)
+├── No  -> fix measurement first. Until then: Manual CPC or Maximize clicks with a cap.
+└── Yes -> How many primary conversions in 30 days, on mature days? (08, section 1)
+          ├── < 15  -> Manual CPC with per-keyword caps, or Maximize clicks with a cap (08, section 6)
+          ├── 15-49 -> Maximize conversions or Target CPA (target = 30-day average CPA adjusted for delay)
+          │           tROAS only with real values and 15+ conversions in 30 days
+          └── 50+   -> Target CPA or Target ROAS; portfolios when several campaigns share the goal
 ```
 
-- 80%+ -> strong presence; consider PMax/Display to scale.
-- 50-80% -> healthy.
-- < 50% -> something is limiting; check IS Lost.
+Details of each strategy, the June 2026 rename, learning and the August 17, 2026 change: 01.
 
-#### Search IS Lost (Budget)
-- How much you lost because of **budget**.
-- > 20% -> budget is limiting. Decision: raise budget if CPA is good, or raise tCPA if you want more volume.
+---
 
-#### Search IS Lost (Rank)
-- How much you lost because of **Ad Rank**, driven by QS + bid.
-- > 30% -> low QS or overly conservative bid. **Attack QS first**, because it is cheaper and more durable than raising bids.
+## 4. Bid adjustments: what each strategy uses
 
-#### Absolute Top Impression Share
-- Percentage of times your ad appeared in the absolute **#1 position** above everything.
-- Brand campaigns: ideal **>80%**. < 50% means a competitor is aggressively buying your name.
-- Non-Brand: 30-50% is healthy.
+Official (`g/2732132`, `g/6268632`, `g/6268637`):
 
-#### Top Impression Share
-- Percentage of times the ad appeared in top positions 1-4.
-- Lead gen target: 60-80%.
+| Adjustment | Manual CPC and Maximize clicks | Target CPA | tROAS, Maximize conversions and value |
+|---|---|---|---|
+| Device | used | **changes the target**: +40% on mobile with a target of 10 means a target of 14 on mobile | only -100% |
+| Location | used | not used | not used |
+| Ad schedule | used | not used (the schedule itself is respected) | not used (same) |
+| Audience, demographics | used | not used | not used |
 
-#### Overlap Rate
-- How often another advertiser appeared **in the same auction** as you.
-- Identifies **direct** competitors. Focus on the top 3.
+- Location and schedule adjustments **do not accept -100%** (they go from -90% to +900%). To stop showing in a
+  place or at a time, **remove it from targeting** (remove the location, restrict the schedule): Smart Bidding
+  respects that.
+- For a geo that is already a target, creating a negative location for the same geo fails in the API: remove the
+  target instead.
+- Real control of CPA by region or device under Smart Bidding = **separate campaigns** with different targets, if
+  each one has volume for its own bidding.
 
-#### Position Above Rate
-- When you and another advertiser are in the auction, the percentage of times they appeared above you.
-- > 50% means they have better QS + bid. Study their copy and landing page.
+---
 
-#### Outranking Share
-- Percentage of times **you** appeared above the other advertiser, or they did not appear.
-- A "win" metric against a specific competitor.
+## 5. Portfolios, shared budgets and bid limits
 
-### Interpretation by symptom
+- **Portfolio** (shared strategy): pools the data of campaigns with the same goal. **Bid limits** (minimum and
+  maximum CPC) in tCPA and tROAS only exist in portfolios, apply only to the Search network, and Google does not
+  recommend them (`g/6268632`).
+- **Shared budgets** (`g/10487241`): +13% conversions on average for advertisers that adopt them with portfolios in
+  Search (Google internal data, January 2024 to March 2025). Available in Search, Shopping, Display and Video;
+  **not compatible** with campaigns in experiments, PMax, App and campaign total budgets. "Maximize" strategies that
+  share a budget must be in the same portfolio.
+- Do not put campaigns with different goals in one budget (brand and non-brand), nor one that needs guaranteed
+  money.
 
-| Symptom | Diagnosis | Action |
+---
+
+## 6. Impression share and competition
+
+Through the API, auction presence is **your own** and is always available:
+
+| Metric | Where | Reading |
 |---|---|---|
-| IS Lost (Budget) > 30% | Demand > budget | Raise budget if CPA is good, or tighten tCPA to spend where conversion probability is higher |
-| IS Lost (Rank) > 40% | Weak QS or low bid | Improve Ad Strength + landing speed; test higher tCPA for 14d |
-| Absolute Top IS < 30% in Brand | Competitor buying your brand | Raise Brand bid; aggressive defensive campaign |
-| Overlap > 60% with X | Direct competitor | Deep analysis of their ad + landing; differentiate |
-| Position Above Rate > 60% for all top 5 | Weak overall Ad Rank | Full review: copy, extensions, landing pages |
-| Volume stable but IS dropped | Market expanded: more eligible auctions, you did not grow | Test broad match carefully; open more geos |
+| `metrics.search_impression_share` | campaign, ad group, keyword | share of eligible impressions |
+| `metrics.search_budget_lost_impression_share` | **campaign only** | lost to budget |
+| `metrics.search_rank_lost_impression_share` | campaign, ad group, keyword | lost to Ad Rank |
+| `metrics.search_top_impression_share`, `search_absolute_top_impression_share` | campaign, ad group, keyword | top and first position |
 
-### Should you buy competitor Brand?
+Readings:
+- High budget loss with a good CPA: demand is bigger than the budget (a budget proposal for the owner).
+- High rank loss: quality or bid; buying rank with bids is expensive (section 7).
+- Gaining rank pushes the campaign into its budget later: budget loss that was 0% can start to appear right after
+  quality improvements.
+- Low absolute top on a **brand** campaign: someone is buying your brand; check Auction Insights.
 
-**Yes**: if you are a challenger in a dominated market and have a clear value proposition to differentiate. Use **phrase match** on the competitor name + "compare" copy + dedicated landing page.
-
-**No**: if the competitor has a much stronger brand; you will only raise both their CPC and yours.
-
-**Caution**: NEVER use exact match on the competitor name. Google penalizes this, and the user does not literally want the competitor. Do not use the competitor name in headlines because of Google trademark policies.
-
----
-
-## 5. Diagnosis: "Why did my CPC increase?"
-
-In order of likelihood:
-
-### 1. Quality Score dropped
-- Check average QS for the top 20 keywords by spend. Did it fall? If yes, this is likely the cause.
-- Root causes: new weak ad, slow landing after update, seasonality.
-
-### 2. Competition entered
-- Auction Insights: new player in top 5? Did overlap rate increase?
-- Response: full copy + extensions + landing review.
-
-### 3. Match expansion through close variants
-- Search terms report: new queries appeared in the last 4 weeks?
-- Exact keywords may now be catching more expensive variants.
-- Response: negative bad variants.
-
-### 4. tCPA / tROAS too tight
-- Did you recently lower the target? CPC can rise when the algorithm has to "buy" only expensive conversions to hit the target.
-- Response: temporarily relax the target.
-
-### 5. Seasonality
-- Is it real seasonality such as Black Friday, end of month, holidays?
-- Response: use Seasonality Adjustment if the event is predictable.
-
-### 6. Auction structure changes by Google
-- Google updates sometimes recalibrate auctions.
-- Monitor the Google Ads blog.
+**Auction Insights does not come out of the API for most developers** (the `metrics.auction_insight_*` metrics with
+`segments.auction_insight_domain` need an allowlist from Google and answer 403 `METRIC_ACCESS_DENIED` otherwise;
+there is no `FROM auction_insight`). Competitor comparison comes from the UI or its CSV export. Report metrics:
+impression share, overlap rate, position above rate, top, absolute top and outranking share. Custom experiments
+have no Auction Insights.
 
 ---
 
-## 6. When to raise or cut bids, even in Smart Bidding
+## 7. Target CPA in practice
 
-In Smart Bidding, **you do not change bids keyword by keyword** - you change the **target**.
-
-### Raise tCPA: higher CPA target means you accept paying more per conversion
-
-- **When**: you are beating target strongly, such as real CPA 30% below target, and want more volume.
-- **How**: increase tCPA by 15-20% and observe for 14 days.
-- **Adjustment signal**: volume grows while target is still beaten -> good.
-
-### Cut tCPA: more aggressive target
-
-- **When**: real CPA is above target and you need to tighten.
-- **How**: cut **gradually**, -10% to -15% every 2 weeks.
-- **Risk**: volume may fall. If conversions fall proportionally, that is natural; if they fall **more than proportionally**, the target is too tight.
-
-### When NOT to change
-
-- After a recent change; wait 14 days.
-- In very low-volume campaigns under 10 conversions/month, where signal is unreliable.
-- During a seasonal event; wait for it to pass.
+- **tCPA aims at the average CPA; it does not cap the cost per click.** Some conversions cost more than the target
+  and some less (`g/6268632`). A configurable CPC cap only exists in portfolios (section 5).
+- **An economic reference, not a mechanism:** since average CPA = average CPC / CVR, if the average CPC already
+  sits near target x average CVR (with a stable CVR and a similar auction mix), lowering the target tends to cut
+  delivery. Example: target 40 x CVR 23% = 9.20 against a real CPC of 9.30 means there is little room below.
+- **Marginal CPA decides whether buying volume is worth it.** `campaign_simulation` with `type = 'TARGET_CPA'` and
+  `modification_method = 'SCALING'` returns about 10 points (0.5x to 4x the target) with conversions, cost and the
+  required budget at each one. Marginal CPA = delta cost / delta conversions between neighboring points. When the
+  average is 30 and the marginal is 100, raising budget or target buys each extra conversion at 100.
+- **Why it is limited:** `campaign.primary_status_reasons` (`BUDGET_CONSTRAINED`, `SEARCH_VOLUME_LIMITED`...)
+  models the current target, not the past, so it does not contradict a 0% budget loss. Budget suggestion:
+  `campaign_budget.recommended_budget_amount_micros` (the recommendation resource does not carry the number in v25).
+- Since August 17, 2026, a budget-limited campaign delivers close to the target, and one that beat the target loses
+  the surplus (01, section 3).
 
 ---
 
-## 7. Sources (2026 research)
+## 8. "Why did CPC (or CPA) go up?"
 
-- [Quality Score - Google Ads Help](https://support.google.com/google-ads/answer/6167118)
-- [Quality Score 2026 - Store Growers](https://www.storegrowers.com/google-ads-quality-score/)
-- [Quality Score in automation-heavy accounts - Optmyzr](https://www.optmyzr.com/blog/google-ads-quality-score/)
-- [Bid Adjustments 2026 - Bigeye](https://www.bigeyeagency.com/insights/google-ads-bid-adjustments-in-2026-what-still-works-whats-changed-and-where-most-campaign-managers-get-it-wrong)
-- [Auction Insights - Google Ads Help](https://support.google.com/google-ads/answer/2579754)
-- [Auction Insights 2026 - Growth Minded Marketing](https://growthmindedmarketing.com/blog/google-ads-auction-insights/)
-- [Auction Insights to Outrank - Search Engine Land](https://searchengineland.com/google-ads-auction-insights-461513)
-- [Shared Budgets 2026 - Digital Marketing Knight](https://www.digitalmarketingknight.com/using-shared-budgets-in-google-ads/)
-- [Portfolio Bid Strategies - PixelRush](https://pixelrush.io/blog/how-to-use-portfolio-bid-strategies-in-google-ads-and-why-you-should/)
-- [Ad Rank 2026 - Digital Marketing Knight](https://www.digitalmarketingknight.com/google-ads-ad-rank-explained/)
+Decompose before prescribing: **CPA = CPC / CVR**. Investigation order:
+
+1. **Measurement.** Did conversions drop on a specific day? Did an action change behavior? (Google can start
+   splitting calls between two call actions: add both.)
+2. **Mix.** Did a more expensive campaign or ad group become a bigger share? Decompose by campaign before the total.
+3. **Auction.** Did rank loss go up? A new competitor in Auction Insights (UI)?
+4. **Search terms.** Did expansion bring new, worse terms? (Read `search_term_view` for the last 4 weeks.)
+5. **Target.** Was the target tightened recently? Or is the campaign budget-limited after August 17, 2026?
+6. **Seasonality.** Compare with the same week last year (08, section 5).
+7. **Sample.** With few conversions, the CPA interval is too wide to call a rise (08, section 3).
+8. **Demand before merit.** An improvement (or a drop) with no change in the period reads first as demand and
+   seasonality, before crediting any change of yours.
+
+---
+
+## 9. When to move the target
+
+- After a change, wait **1 to 2 conversion cycles** and do not change again within the same cycle (`g/10433846`).
+- Low volume (low regime): the target cannot be evaluated; decisions follow rules written before (08).
+- During a seasonal event: wait for it to pass, or use a seasonality adjustment for a short event (01, section 4).
+- Bid and budget never in the same round.
+
+---
+
+## Sources
+
+Google Ads Help (October 1, 2026): `g/1752122` Ad Rank; `g/6167118` and `g/6167123` Quality Score; `g/2732132` bid
+adjustments; `g/6268632` Target CPA; `g/6268637` Target ROAS; `g/10487241` shared budgets; `g/10433846` target
+changes. Google Ads API forum on Auction Insights (https://groups.google.com/g/adwords-api/c/8zPWm9AOwsI).
+Third party: WordStream, Quality Score and cost (https://www.wordstream.com/blog/ws/2013/07/16/quality-score-cost-per-conversion).

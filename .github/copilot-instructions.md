@@ -1,32 +1,33 @@
 # GitHub Copilot Instructions
 
-This is a Claude Code and Codex skill for advanced Google Ads management.
+This is a Google Ads skill for Claude Code, Codex and other AI coding agents.
 
 ## What this repo contains
 
-- `SKILL.md` - entry point with 2026 principles and workflow routing
-- `AGENTS.md` - portable coding-agent instructions
-- `CLAUDE.md` - Claude Code bridge
-- `llms.txt` - compact repository map for LLMs
-- `references/` - deep knowledge files on strategy, keywords, bidding, campaigns, testing, optimization, reporting
-- `scripts/` - Python scripts for generating `.docx` reports and running n-gram analysis on search term CSVs
+- `SKILL.md`: entry point with ground rules, checks, volume regimes, platform facts and routing
+- `AGENTS.md`: portable coding-agent instructions
+- `CLAUDE.md`: Claude Code bridge
+- `llms.txt`: compact repository map for LLMs
+- `references/`: topic playbooks on strategy, keywords, bidding, campaigns, testing, optimization, reporting and low volume
+- `scripts/`: standard-library Python tools for n-grams, negative keyword tests, statistics and budget limits
+- `assets/fixtures/`: synthetic inputs for the tests
 
 ## How to work with this code
 
-**Reference files** are Markdown knowledge documents. They do not import or depend on each other.
+**Reference files** are Markdown documents. Every platform claim cites a source with a date; keep it that way.
 
-**Python scripts** use `python-docx` and `pandas`. They are standalone templates — no shared modules, no config files. Run with:
+**Python scripts** target Python 3.10+ and use only the standard library. They read CSV exports or Google Ads API
+JSON and exit with 2 on invalid input, never with a traceback. Test everything with:
+
 ```bash
-pip install python-docx pandas
-python scripts/build_report.py
+python -B scripts/self_test.py
 ```
 
-**No credentials** are stored in this repository. Google Ads Scripts in `07-reporting-and-gaql.md` use `EMAIL_RECIPIENT = "you@example.com"` as a placeholder - always replace before deploying.
-
-Generated `.csv`, `.xlsx`, and `.docx` files should stay local because they can contain private account data.
+Do not run `python -m py_compile` on its own: it writes `__pycache__` into the repo. The self test already compiles
+every script with the bytecode outside the repo.
 
 ## Key constraints
 
-- Python scripts target Python 3.10+ (uses `list[str]` and `str | None` type hints)
-- `python-docx` does not support all Word features - formatting is done via OxmlElement for borders and shading
-- The fictional example client in the scripts is "Sunrise Floor Removal" - any occurrence of a real client name is a mistake and should be removed
+- No credentials, customer IDs, account IDs or real client exports in the repository.
+- Fixtures are synthetic and stay in `assets/fixtures/`.
+- Public text has no em dashes and no spaced hyphens used as punctuation.

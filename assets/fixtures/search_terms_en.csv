@@ -1,0 +1,8 @@
+Search terms report
+September 1, 2026 - September 30, 2026
+Search term,Match type,Added/Excluded,Campaign,Ad group,Clicks,Impr.,CTR,Currency code,Avg. CPC,Cost,Conv. rate,Conversions,Conv. value,Cost / conv.
+emergency plumber near me,Exact match,None,Plumbing,Emergency,12,150,8.00%,USD,102.88,"1,234.56",16.67%,2.00,800.00,617.28
+how to fix a leaking tap,Phrase match,None,Plumbing,Repairs,5,80,6.25%,USD,3.00,15.00,0.00%,0.00,0.00,0.00
+plumbing course online,Phrase match,None,Plumbing,Generic,3,40,7.50%,USD,2.00,6.00,0.00%,0.00,0.00,0.00
+total plumbing services,Broad match,None,Plumbing,Generic,1,10,10.00%,USD,2.50,2.50,0.00%,0.00,0.00,0.00
+Total: Search terms,,,,,21,280,,USD,,"1,258.06",,2.00,800.00,

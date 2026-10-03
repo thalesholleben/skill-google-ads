@@ -1,0 +1,32 @@
+{
+ "results": [
+  {
+   "adGroupCriterion": {
+    "status": "ENABLED",
+    "keyword": {
+     "text": "roof design template",
+     "matchType": "PHRASE"
+    }
+   }
+  },
+  {
+   "adGroupCriterion": {
+    "status": "PAUSED",
+    "keyword": {
+     "text": "socks outlet",
+     "matchType": "PHRASE"
+    }
+   }
+  },
+  {
+   "adGroupCriterion": {
+    "status": "ENABLED",
+    "negative": true,
+    "keyword": {
+     "text": "free download",
+     "matchType": "PHRASE"
+    }
+   }
+  }
+ ]
+}

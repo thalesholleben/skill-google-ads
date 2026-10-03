@@ -15,14 +15,13 @@ venv/
 *.pem
 *.p12
 
-# Google Ads exports and generated reports
+# Google Ads exports and generated reports (synthetic fixtures are the only CSVs allowed)
 *.csv
+!assets/fixtures/*.csv
 *.xlsx
 *.xls
 *.docx
 ngram_report.csv
-relatorio_interno.docx
-relatorio_cliente.docx
 
 # OS/editor
 .DS_Store

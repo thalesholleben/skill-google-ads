@@ -1,370 +1,186 @@
-# 06 - Optimization Playbook (diagnosis, daily/weekly/monthly, benchmarks)
+# 06: Optimization (audit, cadence, budget reallocation and benchmarks)
 
-> Load this file when the user asks to optimize an account, run an audit, plan next steps, or needs an operating cadence reference.
+> Load to audit an account, build the monthly plan, decide a budget reallocation or sanity-check a number with a
+> benchmark. Cuts on performance go through 08; queries, through 07.
 
----
-
-## 1. 30-minute diagnosis (quick audit)
-
-Workflow for reading a new or problematic account quickly. Use CSVs/UI in this order:
-
-### Step 1 - Overview (5 min)
-
-| Look at | What to look for |
-|---|---|
-| Performance tab -> last 30d | Trend of Conversions, CPA, CTR vs previous period |
-| Recommendations tab | Optimization score, but treat carefully: many recommendations are pro-Google, not pro-account |
-| Account-level alerts | Disapprovals, limited status, budget issues |
-
-### Step 2 - Where the money goes (5 min)
-
-| Look at | Symptoms |
-|---|---|
-| Campaign -> Cost descending | How much do the top 3 campaigns concentrate? Healthy concentration: 60-80% in top 3 |
-| Campaign -> Conv. count descending | Is it the same order as Cost? If not, investigate gap |
-| Campaign -> CPA | 3-5x variation between campaigns is normal; >10x is a red flag |
-
-### Step 3 - Quality Score audit (5 min)
-
-| Look at | Symptom |
-|---|---|
-| Keywords filtered by QS | Percentage of keywords with QS <= 5? If >30%, this is a major opportunity |
-| Top 10 keywords by spend | Their QS? If <= 6, attack FIRST because improvement has high ROI |
-
-### Step 4 - Search Terms (10 min)
-
-| Look at | Action |
-|---|---|
-| Search Terms -> Cost descending, Conv = 0 | Negative candidates |
-| Search Terms -> Conv > 5, high CTR | Candidates to promote to exact |
-| Search Terms containing free, DIY, tutorial, salary, jobs | Obvious negatives list |
-
-### Step 5 - Ad copy & extensions (3 min)
-
-| Look at | Symptom |
-|---|---|
-| Ad Strength by ad group | How many are Poor or Average? These need refresh |
-| Sitelinks / Callouts / Snippets | All filled? Minimum 6 sitelinks, 8 callouts |
-| Extensions with Impr = 0 | Not serving; investigate rejection or low Ad Rank |
-
-### Step 6 - Auction Insights (2 min)
-
-| Look at | Symptom |
-|---|---|
-| Top 3 competitors | Who dominates overlap rate? |
-| Position Above Rate | >50% for all means you are below; attack Ad Rank |
-| Abs Top IS in Brand | <60% means competitor is buying your name |
-
-### Diagnosis outputs
-
-After 30 minutes you should have:
-
-1. **3 largest sources of waste**, quantified in dollars.
-2. **3 largest opportunities**, estimated in dollars or volume.
-3. **3 immediate actions** for this week.
-4. **3 structural actions** for the next 4 weeks.
+Sources: `g/NNNN` = `https://support.google.com/google-ads/answer/NNNN`, checked on October 1, 2026.
 
 ---
 
-## 2. Operating cadence
+## 1. Thirty-minute audit
 
-### Daily (5 min) - anomaly check
+Do it in order; each step can invalidate the next ones. **Mark every check `ok`, `issue`, `unknown` (the evidence is
+missing: say which) or `n/a`**, and never fill an unknown with what accounts usually look like.
 
-Run automated through script + email/Slack alert, or manual check.
+1. **Measurement (5 min).** Which actions are primary, how they count and what they actually measure (07, query 4;
+   08, section 9). Did an action change behavior in the period? Without this, the rest measures the wrong thing.
+2. **Where the money goes (5 min).** Spend, conversions and CPA by campaign and ad group, **with `campaign.id`**; is
+   the spend order the conversion order? A query without `campaign.id` mixes removed campaigns with live ones.
+3. **Why it is limited (5 min).** `primary_status_reasons`, budget and rank loss, recommended budget, marginal CPA
+   (03, sections 6 and 7).
+4. **Search terms (10 min).** Coverage of the visible part; wrong-intent terms (gate A); n-grams (02, section 6).
+5. **Ads and assets (3 min).** RSAs per ad group and Ad Strength; sitelinks, callouts and snippets present and
+   serving (`campaign_asset` with metrics); the final URL answers (fetch with a browser User-Agent; a 406 without a
+   User-Agent is not a 404).
+6. **Competition (2 min).** Impression share and absolute top through the API; Auction Insights in the UI.
+7. **Hour and day (with Manual CPC).** Spend by hour and weekday (07, query 16) before proposing an ad schedule: a
+   B2B account can spend a third of its budget between 11 pm and 4 am with no leads. Before comparing days or
+   devices by CPA, split the actions by what they measure (a weekend can carry only one kind of conversion).
 
-**Alarm triggers:**
-- Daily CPA > 1.5x trailing 14d average CPA.
-- Daily spend > 1.3x trailing 14d average spend.
-- Conv = 0 in a campaign with history of >3 conv/day.
-- Daily CTR < 50% of average.
-- Bid limited / budget limited for new campaigns.
-
-**Common cause:** broken tracking, landing page down, ad disapproval.
-
-### Weekly (60-90 min)
-
-**Block 1 - Search Terms (20 min)**
-- Mine top 100 search terms by spend.
-- Add 5-20 negatives.
-- Promote 1-3 top performer search terms to exact.
-
-**Block 2 - Quality Score & Ad Performance (15 min)**
-- Filter keywords with QS < 6 and spend > $X.
-- Evaluate ad relevance / landing page experience flags.
-- Pause headlines with Low performance rating.
-
-**Block 3 - Bid review (15 min)**
-- In Smart Bidding: adjust **target** if conversion volume is not meeting plan, but not every week.
-- In Maximize Clicks/Manual: adjust granular bids if needed.
-- Check IS Lost (Budget) and (Rank) by campaign.
-
-**Block 4 - Extensions (10 min)**
-- Which sitelinks have 0 impressions? Pause/replace.
-- Add seasonal callouts if relevant.
-- Verify location extension and GBP link.
-
-**Block 5 - Audience review (5 min)**
-- Performance of audience signals in PMax.
-- Customer Match lists updated; refresh every 30 days is recommended.
-
-### Every two weeks (90 min)
-
-- **Budget reallocation**: campaigns hitting target with IS limited by Budget -> raise 20%; campaigns with CPA far above target -> cut or pause.
-- **Auction Insights**: deep dive into competitor changes.
-- **A/B testing decision**: define next experiment.
-- **PMax asset refresh**: run Asset Reporting and replace low performers.
-
-### Monthly (3-4 hours)
-
-**Block 1 - Strategic analysis (60 min)**
-- Month KPIs vs goals vs previous month.
-- Track progress of active tests.
-- Bid strategy decisions: migrate to tROAS? Add target tROAS?
-- Plan for next month.
-
-**Block 2 - N-gram analysis (30 min)**
-- Run `scripts/n_gram_analysis.py` on last 30d search terms.
-- Add batch of negatives + promote top n-grams.
-
-**Block 3 - Auction Insights review (30 min)**
-- Competitor changes.
-- Brand defense status.
-- New threat identification.
-
-**Block 4 - Reporting (60 min)**
-- Generate `.docx` with `scripts/build_report.py` for internal report and `scripts/build_report_cliente.py` for client report.
-- Present findings to stakeholder.
-
-**Block 5 - Tracking review (15 min)**
-- Conversion actions: correct Primary actions?
-- Conversion value up to date?
-- Enhanced Conversions: active status and match rate >70%.
-- DDA: ON.
-
-### Quarterly (1 day)
-
-- Complete structural audit.
-- Match type & keyword strategy review.
-- Account-level negatives review.
-- Customer Match list cleanup.
-- Campaign/ad group reorganization if needed.
-- Budget allocation review based on ROI by campaign.
+**Output:** the check list with its marks; the 3 biggest wastes (with value), the 3 biggest opportunities; actions
+for the week and structural actions, each with its reading rule written before (08, section 8).
 
 ---
 
-## 3. Advanced diagnosis by symptom
+## 2. Cadence
 
-### Symptom: "CPA rose from $50 to $80 in 30 days"
+| When | What |
+|---|---|
+| Daily (automated if possible) | data collection, conversion maturation, anomaly alerts calibrated to the account, budget changes, credentials expiring |
+| Weekly or twice a week | due hypotheses, search terms and negatives, plan with written rules, changes, log |
+| Monthly | client report (07, section 4), budget proposals |
+| Quarterly | structure, negative lists, goals, the volume regime of each campaign |
 
-Decomposition:
+Anomaly alerts that do not fire false positives: a baseline with at least 5 days of spend in the window; spend up to
+2x the budget on one day is not an anomaly; a drop in a known seasonal week compared with the same period last year.
 
-```text
-CPA = Cost / Conv
+---
 
-CPA rises if:
-  - Cost rises while conversions stay flat -> CPC rose OR CTR rose without conversion increase
-  - Conversions fall while cost stays flat -> CR fell
-  - Both
+## 3. Diagnosis by symptom
+
+**"CPA went up."** CPA = CPC / CVR. Follow the order of 03, section 8 (measurement, mix, auction, search terms,
+target, seasonality, sample, demand). With few conversions, compute the CPA interval before calling it a rise.
+
+**"High CTR and low conversion."** The ad promises what the page does not deliver, wrong-intent terms, or a form
+with friction. Check the text against the page and the search terms.
+
+**"Volume flat with the target met."** Read the marginal CPA before loosening the target; high budget loss with a
+good CPA is a budget proposal for the owner; then new keywords with the same intent, a neighboring region with the
+same profile, or PMax as a complement.
+
+**"Brand CPA low and non-brand high."** Normal. Check the brand's absolute top (a competitor buying your name).
+Pausing brand "to save" hands the top spot to the competitor.
+
+**"Ad Strength Poor everywhere."** The ad group's keyword missing from headlines, repeated headlines, too many pins
+or no sitelinks (04, section 5). Remember: the rating is not an auction input.
+
+---
+
+## 4. Budget reallocation
+
+**Budget belongs to the account owner** (budgets, account spending limit, new campaigns with their own budget,
+re-enabling): build the proposal with numbers and risk, and apply only what is approved.
+
+**Spend limits by the official rule** (`g/6385083`, `g/10487143`):
+- on one day, up to **2x the budget**; on the day the budget changes, 2x the **highest** budget chosen that day;
+- in a month with a constant budget, **daily x 30.4**;
+- in the month the budget changes, **spend so far + new budget x days left**, counting the day of the change; that
+  limit **stays fixed until the next change**: a campaign that changed earlier in the month does not go back to
+  x 30.4, and a re-enabled campaign carries the spend it already had in the month.
+
+Before proposing, add up the exposure of every campaign (including new, re-enabled and shared budgets), each with
+its own history this month, and compare with the approved cap. The script refuses the case where the history does
+not determine the limit:
+
+```bash
+python scripts/budget.py --days-left 16 --cap-day 60 --cap-month 1824 \
+  --campaign name=search,budget=28,new=30,spend=430 \
+  --campaign name=brand,budget=32,new=30,spend=470
 ```
 
-**Investigate in order:**
+Spending more than the budget on one day is not an overspend: Google balances it within the month. A cap of 60 a
+day is not "1,800 a month": Google's monthly limit for a constant 60 is 60 x 30.4 = 1,824.
 
-1. **Tracking** - did conversion volume collapse on a specific date? Check tag implementation and site changes.
-2. **CPC** - did it rise? Auction Insights -> new competition? QS dropped?
-3. **CR** - did it fall? Search Terms still relevant? Landing page changed? Form changed? Speed?
-4. **Mix** - did an expensive campaign become a larger share? Did PMax scale?
-5. **Seasonality** - compare against the same month last year.
+**Budget windows** (a promotional credit, an event budget): to stay under S over N days, counting the first and the
+last day in the account time zone, the sum of daily budgets stays at **S / (2 x N), rounded down to cents**, because
+Google can spend 2x every day. With 600 of credit over 10 days, 60 a day looks right and exposes up to 1,200; the
+safe cap is 30.00 (30.01 x 20 is already 600.20). **If the window starts today, day one uses the highest budget
+chosen today:** lowering from 90 to 30 today still exposes 180 today and 720 in the window. `scripts/budget.py
+--window-budget 600 --window-days 10 --campaign ...,max_today=<highest today>` adds up the real exposure and refuses a
+window that starts today without `max_today`. Two conditions before proposing a window: the credit balance
+confirmed in Billing > Promotions (the API only shows what was granted, not what was used), and someone scheduled
+to undo the budget when the window ends (an automation that runs on weekdays cannot undo a window that ends on a
+Sunday).
 
-### Symptom: "High CTR (8%) but very low conversion rate (1%)"
+**How to decide a reallocation** (heuristic, with the marginal CPA of 03, section 7):
 
-Diagnosis: **clickbait** or **ad-to-landing mismatch**.
+| Situation | Action |
+|---|---|
+| CPA below target, high budget loss, acceptable marginal CPA | propose an increase |
+| CPA on target | keep |
+| CPA above target with stable volume | adjust target or keywords before cutting budget |
+| CPA far above and falling, with enough sample (08) | propose a cut or a pause |
 
-**Actions:**
-- Audit headlines: promising something the landing does not deliver?
-- Search Terms: irrelevant queries clicking? Add negatives.
-- Landing: message match with query/headline?
-- Form: too long? Friction?
-
-### Symptom: "Volume has been flat for 2 months, target is being hit"
-
-Diagnosis: opportunity to **scale**.
-
-**Actions in order:**
-1. **Raise tCPA by 15%** or **cut tROAS by 10%** to create auction headroom.
-2. **Check IS Lost (Budget)**; if >20%, raise budget first.
-3. **Add broader match types**: phrase -> phrase + broad in discovery campaign.
-4. **Add Search Themes** in existing PMax.
-5. **Expand geos** if nearby geos have the same customer profile.
-6. **Launch PMax** if not already present.
-
-### Symptom: "Brand campaign CPA is $8 and Non-Brand CPA is $80"
-
-That is normal. Brand is defense for people who already know you. But:
-
-**Check:**
-- Is Brand Abs Top IS >80%? If <60%, competitor is buying your name.
-- Is Brand canibalizing organic? **Generally no** - the person who clicks the ad would often click organic if no ad existed. Test pausing for 2 weeks only if evidence is needed, and watch competitors.
-
-### Symptom: "Ad Strength is Poor in all RSAs and I cannot improve it"
-
-**Common causes:**
-1. Keyword does not appear in headlines.
-2. Headlines are repetitive.
-3. Excessive pinning.
-4. Lack of CTAs, benefits, and unique angles.
-
-**Solution**: rebuild with 15 diverse headlines following the templates in `04-campaign-creation.md`.
+**One lever per round.** Bid and budget together make it impossible to know which one moved the result.
 
 ---
 
-## 4. Budget reallocation framework
+## 5. Benchmarks (sanity only, never a goal)
 
-### Principle
+WordStream/LocaliQ **2026**: 13,474 US small and mid-sized business Search campaigns, April 2025 to March 2026,
+Google and Microsoft. They are **medians**. "Conversion" is any tracked action, and they call cost per conversion
+CPL. The publisher sells management and software.
 
-**Move budget from campaigns where `Actual CPA / Target CPA > 1.3` to campaigns where it is `< 0.8`**, but never increase a campaign by more than 30% at once because it can reset learning.
+| Category | CTR | CPC (USD) | Conversion rate | Cost per conversion (USD) |
+|---|---|---|---|---|
+| All | 6.64% | 5.42 | 8.18% | 66.69 |
+| Home & Home Improvement | 6.47% | 8.33 | 8.05% | 90.92 |
+| Attorneys & Legal | 5.87% | 9.87 | 5.55% | 131.63 |
+| Business Services (a B2B proxy) | 6.10% | 5.87 | 4.85% | 93.69 |
+| Industrial & Commercial | 6.57% | 5.87 | 8.20% | 75.19 |
 
-### Decision table
+- 2026 was stable against 2025; cost per lead fell for the first time in 5 years.
+- Outside the US there is rarely a benchmark with a published method: use the Keyword Planner and the account's
+  own history.
+- **Before comparing, confirm the unit.** If a "lead" action actually measures an outbound click, the account's CPA
+  does not compare with any CPL benchmark; only the part that is a real lead does.
+- CTR-by-position tables are left out on purpose: the ones that circulate are organic results.
 
-| Actual CPA / Target CPA | Conv. trend vs previous month | Action |
+---
+
+## 6. Anti-patterns
+
+| Anti-pattern | Why it hurts | Do instead |
 |---|---|---|
-| < 0.8 | Stable or growing | Raise budget +20% |
-| < 0.8 | Declining | Investigate saturation; keep for another 14d |
-| 0.8-1.2 | Any | Maintain |
-| 1.2-1.5 | Stable or growing | Tighten tCPA -10% before cutting budget |
-| > 1.5 | Declining | Cut 30% or pause |
-
-### Practical example
-
-```text
-Campaign A: budget $30/day, CPA $35 vs target $40, IS Lost (Budget) = 25% -> RAISE +20% = $36/day
-Campaign B: budget $30/day, CPA $70 vs target $50, conversions falling -> CUT -30% = $21/day OR pause
-Total: -$3/day, left for a new test or Display Remarketing
-```
+| Moving the target every week | learning never closes a cycle | 1 to 2 conversion cycles between changes |
+| Pausing on "zero conversions" with few clicks | noise becomes a decision | gate B of 08 |
+| Negatives term by term without n-grams or coverage | endless work and wrong percentages | 02, sections 5 and 6 |
+| Applying every Google recommendation | many raise spend, not results | evaluate one by one |
+| Comparing month with month without mix and seasonality | mix changes look like efficiency | decompose by campaign and compare with last year |
+| Everything in PMax | no visibility of search terms and channels | Search as the base, PMax as a complement |
+| Comparing CPA with a benchmark without checking the unit | wrong conclusion about the account | section 5 |
 
 ---
 
-## 5. 2026 benchmarks for sanity checks
+## 7. When to restructure
 
-### Cross-industry Search medians
-
-| Metric | 2026 median | YoY trend |
-|---|---:|---:|
-| CPC | $4.22 | +12% |
-| CTR | 6.11% | +7% |
-| Conv. Rate | 7.04% | -9% |
-| CPA | $53.52 | +6% |
-
-**2026 insight:** CPC rose more than CPA, meaning page-side conversion rate **absorbed** much of the CPC impact. Where the page did not keep up, CPA exploded. **Landing pages became the bottleneck.**
-
-### By vertical, medians
-
-| Vertical | CPC US$ | CTR | Conv Rate | CPA US$ |
-|---|---:|---:|---:|---:|
-| Local Services / Home Services | 3-8 | 5-8% | 8-15% | 30-80 |
-| E-commerce | 0.80-3 | 2-6% | 1-4% | 25-80 |
-| B2B SaaS | 3-8 | 3-6% | 2-6% | 80-250 |
-| Legal | 6-15+ | 4-8% | 3-8% | 80-200+ |
-| Health & Wellness | 1-4 | 5-10% | 5-12% | 30-100 |
-| Automotive Service | 2-5 | 6-10% | 8-14% | 25-70 |
-| Education | 2-5 | 4-7% | 3-8% | 50-150 |
-| Real Estate | 1-4 | 5-8% | 3-7% | 50-150 |
-| Finance/Insurance | 5-15 | 4-7% | 4-10% | 80-250 |
-
-**Do not use these as targets**. Targets come from client economics. Use them as a **sanity check**: "my account is at $200 CPA in a vertical where median is $50 -> something is very wrong, or the client is a highly atypical case that must be justified."
-
-### CTR by position in search
-
-- Position 1 (Abs Top): 30-40% CTR in search with strong intent.
-- Position 2: 12-18%.
-- Position 3: 6-10%.
-- Position 4+: 3-6%.
-
-This decay justifies investment in Quality Score and extensions to move up.
+- Different offers in the same ad group or campaign, with volume to split.
+- 90% of keywords in 2 ad groups.
+- A PMax campaign cannibalizing brand Search.
+- Dozens of campaigns with small spend each (consolidate; with low volume, always).
+- A new strategic direction from the owner (audience, offer): it becomes a plan with rules written before launch.
 
 ---
 
-## 6. Optimization anti-patterns
-
-| Anti-pattern | Why it is bad | Do this |
-|---|---|---|
-| Changing tCPA every week | Resets learning, chaotic conversion trend | Change at most every 14 days |
-| Pausing campaigns/keywords every week | Data does not accumulate; decisions are premature | Wait for 14 days of data |
-| Negating 1 bad search term and ignoring n-grams | Infinite work, low impact | N-gram analysis every two weeks |
-| Applying all Google Recommendations | Many are for Google, not for you | Evaluate ROI of each one |
-| Ignoring Quality Score because "Smart Bidding handles it" | QS affects effective CPC, not just position | Attack QS<6 whenever possible |
-| Comparing monthly CPA without mix adjustment | Mix changes are confused with efficiency changes | Decompose CPA by campaign first |
-| Betting everything on PMax | Low visibility, loss of control | Search foundation + PMax as complement |
-| "I will pause Brand to save budget" | Brand is defense; pausing lets competitor take the slot | Keep Brand always, optimize cost |
-| Changing copy + landing + bid in the same experiment | Cannot isolate cause | 1 variable per test |
-| No KPI dashboard | Reactive, not proactive decisions | Looker Studio / automated spreadsheet |
-
----
-
-## 7. Signs the account needs restructuring, not only optimization
-
-Incremental optimization cannot fix structural problems. Signs it is time to **restructure**:
-
-- Multiple verticals/products in the same campaign set; Smart Bidding cannot learn distinct patterns.
-- 90% of keywords in 2 ad groups; rebalance is urgent.
-- Entire account on Manual CPC; underusing AI.
-- No value tracking; stuck on tCPA when tROAS could be used.
-- Pre-PMax campaign plus PMax canibalization.
-- 30+ campaigns each spending under $5/day; consolidate.
-- Sideways performance for 6+ months with no innovation.
-
----
-
-## 8. Optimization plan template
-
-Use this template when presenting a plan to the client.
+## 8. Plan template
 
 ```markdown
-# Optimization Plan - [Account] - [Month]
-
+# Plan: <account>, <date>
 ## Diagnosis
-- Spend: $X. Conv: Y. CPA: $Z (target: $W).
-- 3 main symptoms:
-  1. [symptom with quantified $ impact]
-  2. [...]
-  3. [...]
-
-## Plan (4 waves)
-
-### Wave 1 - This week (immediate impact)
-- [ ] Negative [N] identified terms (estimated waste: $X/month)
-- [ ] Pause keyword(s) with 0 conv and > $Y spend
-- [ ] RSA refresh in [ad group X] (Ad Strength: Poor -> Good)
-
-### Wave 2 - Next 2 weeks (structural fixes)
-- [ ] Restructure ad group X by splitting into 2
-- [ ] Raise campaign Y tCPA from $A to $B with gradual ramp
-- [ ] Add Customer Match to exclude existing customers
-
-### Wave 3 - Next 4 weeks (tests and expansion)
-- [ ] Launch experiment: [hypothesis H]
-- [ ] Add campaign for [new vertical/audience]
-- [ ] N-gram analysis + negative batch
-
-### Wave 4 - Next 60 days (strategic)
-- [ ] Migrate to tROAS after implementing conversion value
-- [ ] Implement OCI to qualify downstream leads
-- [ ] Enable AI Max in existing campaigns after validation
-
-## Expected results
-- Q+30d: CPA falls from $Z to $Z' (-X%), volume stable or +Y%.
-- Q+60d: test lift from tROAS / lead quality.
-- Q+90d: cleaner structure, foundation for scaling.
+- Spend, primary conversions (by action), CPA; search term coverage; volume regime (08).
+- Audit checks marked ok, issue, unknown or n/a.
+- 3 symptoms with numbers.
+## Changes
+| # | What changes | Why (number) | Expected effect | Reading rule (written before) | Undo |
+## Proposals for the owner (budget, direction)
+| Campaign | Current | Proposed | Reason | Risk |
+## Open and due hypotheses
 ```
 
 ---
 
-## 9. Sources (2026 research)
+## Sources
 
-- [Quality Score 2026 - Optmyzr](https://www.optmyzr.com/blog/google-ads-quality-score/)
-- [Benchmarks 2026 - Digital Applied](https://www.digitalapplied.com/blog/google-ads-benchmarks-2026-cpc-ctr-cvr-industry)
-- [Benchmarks by Industry 2026 - Foundry CRO](https://foundrycro.com/blog/google-ads-benchmarks-by-industry-2026/)
-- [PPC Benchmarks 2026 - WebFX](https://www.webfx.com/blog/marketing/ppc-benchmarks-to-know/)
-- [CRO Best Practices 2026 - Aimers](https://aimers.io/blog/conversion-rate-optimization-best-practices)
-- [Landing Page Optimization 2026 - SaaS Hero](https://www.saashero.net/google-ppc/google-ads-landing-page-optimization/)
-- [N-gram Wasted Spend - Taikun Digital](https://www.taikundigital.com/blog/remove-ppc-waste-n-gram-analysis/)
-- [Google Ads Scripts 2026 - groas.ai](https://groas.ai/post/best-google-ads-scripts-2026-install-guide-automation-limits)
+Google Ads Help (October 1, 2026): `g/6385083` daily budget; `g/10487143` budget changes during the month.
+Benchmarks: WordStream 2026 (https://www.wordstream.com/blog/2026-google-ads-benchmarks) and LocaliQ
+(https://localiq.com/blog/search-advertising-benchmarks/).

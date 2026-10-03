@@ -1,0 +1,93 @@
+{
+ "results": [
+  {
+   "campaign": {
+    "id": "111"
+   },
+   "metrics": {
+    "clicks": "4",
+    "impressions": "40",
+    "costMicros": "12000000",
+    "conversions": 1.0,
+    "conversionsValue": 300.0
+   },
+   "searchTermView": {
+    "searchTerm": "free estimate roof repair",
+    "status": "NONE"
+   }
+  },
+  {
+   "campaign": {
+    "id": "222"
+   },
+   "metrics": {
+    "clicks": "1",
+    "impressions": "9",
+    "costMicros": "3000000",
+    "conversions": 0.9992
+   },
+   "searchTermView": {
+    "searchTerm": "Free Estimate roof repair",
+    "status": "NONE"
+   }
+  },
+  {
+   "campaign": {
+    "id": "111"
+   },
+   "metrics": {
+    "clicks": "2",
+    "impressions": "30",
+    "costMicros": "3000000",
+    "conversions": 0
+   },
+   "searchTermView": {
+    "searchTerm": "free download roof design template",
+    "status": "NONE"
+   }
+  },
+  {
+   "campaign": {
+    "id": "111"
+   },
+   "metrics": {
+    "clicks": "1",
+    "impressions": "12",
+    "costMicros": "1500000",
+    "conversions": 0
+   },
+   "searchTermView": {
+    "searchTerm": "café near me",
+    "status": "NONE"
+   }
+  },
+  {
+   "campaign": {
+    "id": "111"
+   },
+   "metrics": {
+    "clicks": "1",
+    "impressions": "5",
+    "costMicros": "900000",
+    "conversions": 0
+   },
+   "searchTermView": {
+    "searchTerm": "socks & shoes outlet",
+    "status": "NONE"
+   }
+  },
+  {
+   "campaign": {
+    "id": "111"
+   },
+   "metrics": {
+    "clicks": "3",
+    "impressions": "25",
+    "costMicros": "6000000"
+   },
+   "campaignSearchTermView": {
+    "searchTerm": "cheap shoes"
+   }
+  }
+ ]
+}

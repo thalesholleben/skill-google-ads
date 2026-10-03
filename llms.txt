@@ -1,34 +1,38 @@
 # Claude Code + Codex Google Ads Skill
 
-> Agent-readable Google Ads skill for Claude Code, Codex, and AI coding agents. Covers 2026 strategy, Smart Bidding, AI Max, keyword research, auction analysis, experiments, optimization, GAQL, and report generation.
+> Agent-readable Google Ads skill for Claude Code, Codex and AI coding agents. Covers account diagnosis, Smart Bidding, AI Max, keywords and negatives, auction analysis, ads and assets, experiments, budget limits, GAQL and reporting, with statistics for low-volume accounts. Platform facts checked in October 2026.
 
 ## Start here
 
-- `README.md`: public overview, installation, topics, and security notes.
-- `SKILL.md`: primary skill entry point and routing logic.
+- `README.md`: overview, installation, scripts and security notes.
+- `SKILL.md`: primary entry point: ground rules, checks, volume regimes, platform facts and routing.
 - `AGENTS.md`: instructions for coding agents working in this repository.
 - `CLAUDE.md`: Claude Code bridge.
 - `.github/copilot-instructions.md`: GitHub Copilot instructions.
+- `CHANGELOG.md`: versions and migration notes.
 
 ## Deep references
 
-- `references/01-strategy.md`: Smart Bidding, AI Max, attribution, audiences.
-- `references/02-keyword-research.md`: intent mapping, match types, n-gram, SQR mining.
-- `references/03-bidding-and-auction.md`: bidding strategies and Auction Insights.
-- `references/04-campaign-creation.md`: campaign setup, RSAs, extensions, negatives.
-- `references/05-ab-testing.md`: experiments and significance.
-- `references/06-optimization-playbook.md`: daily, weekly, monthly optimization and diagnosis.
-- `references/07-reporting-and-gaql.md`: GAQL queries and Google Ads Script templates.
+- `references/01-strategy.md`: bidding strategies, learning, targets, AI Max, measurement, audiences.
+- `references/02-keyword-research.md`: intent, match types, negatives, search terms, n-grams.
+- `references/03-bidding-and-auction.md`: Ad Rank, Quality Score, bid adjustments, impression share, Target CPA.
+- `references/04-campaign-creation.md`: structure, setup, RSAs, assets, launch, Performance Max.
+- `references/05-ab-testing.md`: experiments, sample size, low-volume testing.
+- `references/06-optimization-playbook.md`: audit, cadence, budget limits and windows, benchmarks.
+- `references/07-reporting-and-gaql.md`: GAQL validated on API v25, API limits, client report.
+- `references/08-low-volume.md`: statistics, cut gates, decision rules written before launch.
 
-## Local scripts
+## Local scripts (Python 3.10+, standard library only)
 
-- `scripts/build_report.py`: internal monthly `.docx` report template.
-- `scripts/build_report_cliente.py`: client-facing `.docx` report template.
-- `scripts/n_gram_analysis.py`: search term n-gram analysis from CSV exports.
+- `scripts/n_gram_analysis.py`: search term n-grams with coverage and a statistical guard.
+- `scripts/negatives.py`: what a negative keyword would block in your terms and keywords.
+- `scripts/stats.py`: P(0), minimum clicks, exact intervals, Fisher exact.
+- `scripts/budget.py`: spend limits, approved caps and budget windows.
+- `scripts/self_test.py`: offline test, run by the CI.
 - `scripts/README.md`: script usage.
 
 ## Constraints
 
-- This is not a runnable web app, API, or hosted service.
-- Do not commit credentials, customer IDs, account IDs, real search-term exports, or generated client reports.
-- Load `SKILL.md` first, then only the reference file relevant to the user's Google Ads task.
+- This is not a runnable web app, API or hosted service.
+- Do not commit credentials, customer IDs, account IDs, real search term exports or client reports.
+- Load `SKILL.md` first, then only the reference file relevant to the task.
