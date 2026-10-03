@@ -1,585 +1,262 @@
-# 04 - Campaign Creation (step-by-step 2026)
+# 04: Campaign creation and account structure
 
-> Load this file when the user asks to create or restructure a campaign, configure a new account, or define account structure.
+> Load to build or restructure a campaign, design the account, write RSAs and assets, or prepare PMax. Through the
+> API, everything starts `PAUSED` and every change runs with `validate_only` first.
+
+Sources: `g/NNNN` = `https://support.google.com/google-ads/answer/NNNN`, checked on October 1, 2026, unless another
+date is given.
 
 ---
 
-## 1. Before touching Google Ads - prerequisites
-
-Do not create a campaign without answering these questions. If anything is missing, **talk to the client first**.
+## 1. Before touching the account
 
 | Question | Why it matters |
 |---|---|
-| What is the goal? lead/sale/install/call | Defines conversion action and bid strategy |
-| What is the average order value (B2C) or LTV (B2B)? | Defines target CPA / target ROAS |
-| Margin or markup? | Without margin, "5x ROAS" can be unprofitable |
-| Service geography? | Location targeting |
-| Audience language? | Language settings + copy |
-| Known seasonality? | Calendar + Seasonality Adjustments |
-| Site / landing ready? | Prerequisite for QS and tracking |
-| Tracking implemented? | **GA4 + Google tag + Enhanced Conversions ON** |
-| Monthly budget? | Defines which strategy is viable |
-| Main competitors? | Brand defense + Competitor campaigns |
-| Clear differentiation? | Input for copy |
+| What is the goal and **what will the conversion actually measure**? | An action's name proves nothing: a form hosted on a third-party domain becomes an outbound click |
+| Ticket, margin and close rate | they set the break-even CPA or ROAS; without them a target is a guess |
+| Where is the business, and where is the person when they search? | targeting and local demand |
+| Expected search volume and cost | Keyword Planner and forecast, in the account currency |
+| Budget and who approves it | the account owner approves spend |
+| A fast landing page ready | page experience is not fixed in the ad |
+| Measurement ready | Google tag, primary conversion, Enhanced Conversions, GA4 linked |
+| Competitors and differentiator | input for ad text and brand defense |
 
-### Minimum to start
+**Address and service area from the live website, not from old notes.** Businesses move and old scrapes stay wrong;
+targeting built on an outdated address can leave the ads far from the actual store and miss the towns around it. Read the live site with a
+browser User-Agent (some servers answer 403 to short User-Agents). For a physical store: a radius around the store,
+sized by driving time, and the radius demand measured in the Keyword Planner before promising volume. Inside a
+small radius, good searches are often only a few hundred a month, and the budget that turns into good clicks is
+smaller than it looks.
 
-- Site with HTTPS, privacy policy, visible contact information.
-- Conversion action configured with value, even if estimated.
-- Google tag installed and validated through Tag Assistant.
-- Enhanced Conversions enabled.
-- GA4 linked with Google Ads for audiences and imported conversions.
-- Budget >= 30 x target CPA / month as a rule of thumb for data.
+**Business name in ads** (policy update for October 2026, `adspolicy/answer/18287059`, posted October 1, 2026): the
+business name and the destination domain may differ only when the name reflects the advertiser's recognized brand,
+there is a verified direct relationship with the domain owner, and the products or services are offered directly on
+that domain. Resellers, booking intermediaries and affiliates cannot use the brand of what they sell as their
+business name.
 
----
-
-## 2. Account structure - models by context
-
-### A. Lead Gen / Local Service account template
-
-```text
-Account
-|-- [Brand] Brand Defense
-|   `-- Ad Group: Brand Terms (exact + phrase)
-|
-|-- [Search] Specific Services - [service] - [geo]
-|   |-- Ad Group: Service A (5-15 keywords)
-|   `-- Ad Group: Service B
-|
-|-- [Search] Phone Leads - [service] - [geo]
-|   `-- Ad Group: General (Call extension priority)
-|
-|-- [Search] Competitor - [vertical]
-|   `-- Ad Group: Competitor [name] (phrase only)
-|
-`-- [Display/PMax] Remarketing - visitors
-    `-- Asset Group: Remarketing
-```
-
-### B. E-commerce account template
-
-```text
-Account
-|-- [Brand] Defense
-|
-|-- [Search] Generic - [parent category]
-|   |-- Ad Group: Subcategory A (Phrase + Exact)
-|   `-- Ad Group: Subcategory B
-|
-|-- [Shopping] Standard
-|
-|-- [PMax] Performance Max
-|   `-- Asset Groups by category/persona
-|
-`-- [Display] Remarketing
-```
-
-### C. B2B SaaS account template
-
-```text
-Account
-|-- [Brand] Defense
-|
-|-- [Search] Product-aware
-|   |-- Ad Group: Core feature 1
-|   `-- Ad Group: Core feature 2
-|
-|-- [Search] Solution-aware
-|   |-- Ad Group: Use case 1
-|   `-- Ad Group: Use case 2
-|
-|-- [Search] Problem-aware
-|   `-- Ad Group: Pain point keywords (phrase + broad with Smart Bidding)
-|
-|-- [Search] Competitor
-|
-`-- [Demand Gen] Top of funnel
-```
-
-### Campaign split rules
-
-Create a **separate campaign** when:
-- Budget needs independent control.
-- Audience is radically different.
-- Geography is different.
-- Ad scheduling is different.
-- A different bid strategy makes sense, for example Brand on Max Conv and Non-Brand on tCPA.
-
-Create a **separate ad group** when:
-- Theme/intent is different enough to need distinct copy.
-- Landing page is different.
+**Minimum to go live:** a primary conversion tested with one real conversion; the page live with HTTPS, contact
+details and a privacy policy; the account spending limit checked (an old account budget almost fully spent stops
+delivery, and no status warns about it: read `account_budget`); the site's Content Security Policy allowing the
+conversion ping (`www.google.com/measurement/conversion`), or conversions silently fail.
 
 ---
 
-## 3. Step-by-step setup (Search campaign - YAML for clarity)
+## 2. Account structure
+
+### A. Local lead generation (services)
+
+```
+Account
+├── [Search] Brand                      (exact and phrase of the name)
+├── [Search] Services, <region>         ad groups by service, 5 to 15 keywords each
+├── [Search] Calls, <region>            if calls are the channel that closes
+└── [Search] Competitors (optional)     competitor name in phrase, comparison page
+```
+
+### B. E-commerce
+
+```
+Account
+├── [Search] Brand
+├── [Search] Categories                 ad groups by subcategory
+├── [Shopping] or [PMax] Feed           asset groups by category
+└── [Demand Gen] Remarketing (optional)
+```
+
+### C. B2B SaaS with volume
+
+```
+Account
+├── [Search] Brand
+├── [Search] Product (features)
+├── [Search] Solution (use cases)
+├── [Search] Problem                    educational page
+└── [Search] Competitors
+```
+
+### D. Low-volume B2B (few leads a month, high ticket)
+
+```
+Account
+└── [Search] One campaign, Manual CPC with per-keyword caps
+    ├── Ad group: vendor searches       ("<service> company", "<service> agency near me")
+    └── Ad group: solution searches     ("<problem> software", "<process> management system")
+        qualifying headlines (section 5), a landing page written for that buyer
+```
+
+**Split into another campaign** when the budget must be controlled separately, the region or audience is
+different, or the bidding strategy is different. **Split into another ad group** when the theme needs another ad or
+another page. **With low volume, consolidate:** every extra split fragments data that is already short (08).
+
+---
+
+## 3. Search campaign setup
 
 ```yaml
 campaign:
-  name: "[Search] Gutter Cleaning - Phone Leads - Springfield"
+  name: "[Search] Services, <region>"
+  status: PAUSED                    # everything starts paused; turning on is a separate step
   type: SEARCH
-
-  # === BUDGET & BIDDING ===
-  daily_budget: 30 USD
-  bid_strategy: MAXIMIZE_CONVERSIONS
-  bid_target_cpa: null   # add after 30 conv/30d
-
-  # === LOCATIONS ===
-  locations:
-    target: "Example County, Ohio"
-    radius_targeting: false
-    location_options: PRESENCE         # do NOT use PRESENCE_OR_INTEREST without reason
-
-  # === LANGUAGES ===
-  languages: [en, es]   # include Spanish in FL/TX/CA by default
-
-  # === NETWORKS ===
+  budget_daily: <proposal for the owner> # spend needs approval
+  bidding: <by regime, 03 section 3> # low: MANUAL_CPC or MAXIMIZE_CLICKS with a cap
   networks:
     google_search: true
-    search_partners: false   # start OFF, enable later only if search is strong
-    display: false           # NEVER in a Search campaign; Display Network for Search is a trap
-
-  # === SCHEDULE ===
-  ad_schedule:
-    enabled: false   # let Smart Bidding decide; enable only for Maximize Clicks
-
-  # === DEVICES ===
-  devices:
-    all_enabled: true
-    exclude:
-      - tablets: false   # tablets outperform expectations in some niches
-
-  # === AD ROTATION ===
-  ad_rotation: OPTIMIZE
-
-  # === FREQUENCY CAPPING ===
-  # Not applicable to Search; applies to Display/PMax/Demand Gen
-
-  # === CONVERSION ACTIONS ===
-  conversion_actions:
-    - "Phone Call (offline OCI)"      # PRIMARY
-    - "Form Submit"                   # PRIMARY
-    - "Page View Pricing"             # SECONDARY; do not optimize for this
-
-  # === ATTRIBUTION ===
-  attribution_model: DATA_DRIVEN
-  conversion_window: 30_days
-
-  # === EXCLUSIONS ===
-  audience_exclusions:
-    - "Existing Customers (Customer Match)"
-    - "Recent Form Submitters (last 30d)"
+    search_partners: false          # turn on only as an isolated test
+    display_expansion: false        # spends leftover Search budget on Display; off for lead gen
+  locations:
+    targets: ["<cities, regions or a radius you actually serve>"]
+    option: PRESENCE_OR_INTEREST    # Google's recommendation for Search (g/1722043)
+    # PRESENCE for local services that only serve people who are in the area (heuristic) or sensitive sectors
+  languages: n/a                    # language targeting removed from Search in September 2026 (g/1722078)
+  ad_schedule: <only if the business has hours and the channel is calls>
+  conversion_goals: <primary actions that measure leads or sales; everything else secondary>
+  ai_max: false                     # only in medium or high regimes (01, section 6)
 ```
+
+- **Language:** since September 2026, Search ignores the language setting; the ad matches through its own language
+  and the page. For a bilingual audience, write ads in the other language too.
+- **Search partners and Display expansion:** both remain optional under "Networks" (`g/7193800`, `g/1722047`).
 
 ---
 
 ## 4. Ad groups and keywords
 
-### How many keywords per ad group?
-
-- **STAG (Single Theme Ad Group)**: 5-15 keywords in the same theme/intent.
-- **SKAG**: 1 keyword, rare in 2026 and only for very high-volume queen keywords.
-
-### Match type structure inside an ad group
-
-```yaml
-ad_group: "Gutter Cleaning Service"
-keywords:
-  exact_match:
-    - "[gutter cleaning]"           # proven queen keyword
-    - "[gutter repair]"
-
-  phrase_match:
-    - '"gutter cleaning service"'
-    - '"gutter repair service"'
-    - '"remove old floor"'
-    - '"tile removal"'             # strong subcategory
-    - '"hardwood removal"'
-
-  broad_match:
-    # ONLY if campaign has 50+ conv/month + solid tracking
-    - "gutter cleaning Springfield"
-    - "carpet removal contractor"
-```
-
-### Ad group negatives
-
-```yaml
-ad_group_negatives:
-  - "[free]"           # exact, do not negative phrase "free"
-  - "DIY"
-  - "tutorial"
-  - "video"
-  - "rental"           # if you are a removal service, not rental
-```
+- 5 to 15 keywords per ad group, one theme and one intent. Phrase and exact at the start (02, section 3).
+- Broad only in the right regime. A broad keyword with a phrase sibling that does not convert falls under gate D
+  in medium or high regimes, and only with gate B's click minimum; in the low regime, only gate B (08, section 4).
+- Starter negatives: the universal list and the industry list (02, section 4), tested against the seed keywords.
 
 ---
 
-## 5. RSA (Responsive Search Ads) - 2026 best practices
+## 5. Responsive search ads (RSA)
 
-### Minimum composition
+**Limits:** up to **15 headlines** of 30 characters, **4 descriptions** of 90, paths of 15; at most **3 enabled RSAs
+per ad group** (a fourth returns `RESOURCE_LIMIT`; to swap, pause one and create the new one in the same request, in
+that order).
 
-- **15 headlines**, the maximum allowed. Full diversity.
-- **4 descriptions**, the maximum. Each with a different angle.
-- **2 RSAs per ad group** with different final URLs to test landing pages.
-- **Target Ad Strength: Excellent**, or at least Good.
+**Ad Strength** (`g/9921843`):
+- Poor to Excellent gives on average **+15% conversions** (RSA and sitelinks combined). **Ad Strength is not used in
+  the auction nor in Quality Score.**
+- Official best practice: **at least 2 RSAs rated Good or Excellent per ad group, each with its own final URL**;
+  the 2nd RSA yields +6.6% conversions and the 3rd, +3.7%.
+- 6+ sitelinks count toward Good or better; text generated by text customization also counts.
+- In low-volume accounts, `ad_group_ad_asset_view.performance_label` comes back `NOT_APPLICABLE`: you cannot pick
+  headlines by label.
 
-### Headline distribution model
+**Pinning:** pinning reduces combinations, and repeated or similar pins lower the rating. Google suggests pinning 1
+or 2 essential headlines and, if needed, putting several versions in the same position. Legitimate uses:
+- legal or brand requirements;
+- **filtering out non-buyers**: a qualifying headline pinned in position 2 ("Projects from $X", "For companies with
+  50+ employees") keeps price shoppers away. An ad that turns away the curious is doing its job when volume is
+  scarce and each click is expensive.
+With AI Max final URL expansion on, pins can be ignored (01, section 6).
 
-Distribute the 15 slots:
+**Composition** (heuristic): headlines with the ad group's keyword, benefit, proof, offer, call to action and
+differentiator; descriptions with different angles, each ending in a call to action or differentiator. **The ad
+only claims what the page publishes** (an ad that promises "published price list" after the page dropped its price
+table is a disapproval or a disappointed lead waiting to happen).
 
-| Category | Quantity | Example |
-|---|---:|---|
-| Keyword headlines | 3 | "Gutter Cleaning Springfield", "Pro Gutter Repair Service", "{Keyword:Gutter Cleaning} Experts" |
-| Benefit/USP | 3 | "Same-Day Service Available", "Licensed & Insured Crew", "No Mess, No Damage" |
-| Social proof | 2 | "5 Star on Google - 200+ Reviews", "Trusted by 500+ Homeowners" |
-| CTA | 3 | "Get Free Estimate Today", "Call Now (407) XXX-XXXX", "Schedule Free Consultation" |
-| Urgency / offer | 2 | "Free Quote in 24 Hours", "Book This Week - Save 10%" |
-| Differentiator | 2 | "Family-Owned Since 2008", "Eco-Friendly Disposal Included" |
-
-### Descriptions (4 slots)
-
-```text
-Description 1 (benefit-focused):
-"Professional gutter cleaning in Springfield. Tile, hardwood, carpet, vinyl - we handle it.
-Free estimates. Fully licensed and insured."
-
-Description 2 (process):
-"Clean, dust-controlled removal. We protect your home, haul away debris, leave the
-subfloor ready for new install."
-
-Description 3 (CTA + trust):
-"Get a written quote in 24 hours. 200+ five-star reviews. Family-owned since 2008.
-Call (407) XXX-XXXX or book online."
-
-Description 4 (urgency / differentiator):
-"Same-week service available. Eco-friendly disposal included. No hidden fees.
-Schedule your free consultation today."
-```
-
-### Pinning - when to use it and when not to
-
-**Pinning follows the LESS IS MORE rule in 2026.** Pinning prevents Ad Strength from reaching Excellent and lowers it automatically.
-
-**Use ONLY when:**
-- Compliance/regulatory needs require it, for example a fixed healthcare disclaimer in position 3.
-- Brand guidelines require the brand name in headline 1.
-- You are testing a specific headline in a specific position, limited to 14 days.
-
-**NEVER pin:**
-- More than 1 headline in position 1.
-- Because of personal preference without data.
-- Multiple headlines broadly. If needed, use **multi-pin**: 2-3 headlines competing for one position.
-
-### How to improve Ad Strength from Average to Good/Excellent
-
-Google evaluates:
-
-1. **Headline diversity**: benefit, feature, CTA, and other types.
-2. **Including popular keywords in headlines**: main ad group keyword in at least 3 headlines.
-3. **More unique headlines**: unique words, not the same word repeated in 5 headlines.
-4. **Including more headlines**: use all 15 slots.
-
-Specific actions:
-- Headlines should use at least 25 of 30 characters.
-- Descriptions should use 80-90 of 90 characters.
-- Each description ends with a CTA or unique differentiator.
+**Changing text without recreating the ad:** an `AdService` update of the responsive search ad with the full lists
+of headlines and descriptions (the update replaces, it does not merge); the ad keeps its ID and status. Call-only
+ads cannot be created since January 2026 and stop serving in February 2027: the replacement is an RSA with a call
+asset.
 
 ---
 
-## 6. Extensions / Assets required in 2026
+## 6. Assets (formerly extensions)
 
-Extensions are **free** and increase CTR by **10-25%**. In 2026, **Google evaluates relevance through extensions** - not using them creates an implicit penalty.
+| Asset | Limits and rule | Source |
+|---|---|---|
+| Sitelink | text 25, two descriptions of 35 (fill both for the detailed format); up to 6 show on desktop and 8 on mobile; 6 per campaign give up to +3.5% conversions | `g/2375416` |
+| Callout | 25 characters | API |
+| Structured snippet | 13 fixed headers, 3 to 10 values of 25 (Google recommends 4+); up to 2 on desktop and 1 on mobile; in the API the header is the **exact translated string** of the ad's language (in English "Services" does not exist: use "Service catalog" or "Types"; in other languages, the translated header) | `g/6280012`, API |
+| Call | a tracked number; calls from the ad show in `call_view` | API |
+| Location | linked to the Business Profile | |
 
-### Required extensions by campaign
+**Hierarchy:** sitelinks from every level (account, campaign, ad group) **show together**, without replacement; for
+structured snippets the most granular level replaces the one above (`g/2375416`, `g/6280012`). Consequence: a
+campaign-level asset shows in every ad group that has no asset of its own. An ad group with a new landing page
+needs its own assets, with every value written on that page.
 
-#### Sitelinks: minimum 6, ideal 8
-- **2 description lines** each, the high-performance 2026 format.
-- Specific pages, not the home page.
-- Examples for Gutter Cleaning:
-  - "Tile Removal" -> /tile-removal | "Same-day quote, no obligation. Pro tile demo crews."
-  - "Hardwood Removal" -> /hardwood | "Careful removal of nail-down or glue-down floors."
-  - "Free Estimate" -> /quote | "Online form, response in 1 hour business hours."
-  - "Service Areas" -> /coverage | "Orange, Seminole, Lake, Osceola counties."
-
-#### Callouts: minimum 8
-
-Short non-clickable text up to 25 characters, shown below the description.
-
-```text
-"Free Estimates"
-"Licensed & Insured"
-"Same-Day Service"
-"Family-Owned"
-"5 Star Google Reviews"
-"Eco-Friendly Disposal"
-"No Hidden Fees"
-"Serving Central FL"
-```
-
-#### Structured Snippets: minimum 1, ideal 2 categories
-
-Categorized lists. Google chooses the header; you provide values.
-
-```text
-Header: "Service Catalog"
-Values: ["Tile Removal", "Hardwood Removal", "Carpet Pulling", "Vinyl Removal", "Subfloor Prep"]
-
-Header: "Brands"  # only if selling products
-Values: [...]
-```
-
-#### Call Extension
-
-For **lead gen with phone as conversion**:
-- Phone tracking number is preferred because it measures conversions.
-- Mobile-only ON when campaigns are >70% mobile.
-- Schedule, for example 8am-6pm business hours.
-
-#### Location Extension
-
-- Link Google Business Profile.
-- Shows map, address, and hours in ads.
-- Critical for local services.
-
-### Extension hierarchy in 2026
-
-```text
-Account level   -> evergreen: Free Estimates, Licensed, etc.
-Campaign level  -> theme: Tile campaign has tile-specific callouts
-Ad Group level  -> tactical: current offer, seasonal
-```
-
-Google now **mixes extensions from different levels** in the same ad, so using all levels is an advantage, not a conflict.
+- Unused RSA headlines can take the space of sitelinks.
+- Automatically created assets (`asset.source = AUTOMATICALLY_CREATED`) cannot be linked by hand; advertiser assets
+  serve even when the ad group has automatic ones. The old ACA became AI Max text customization; account-level
+  automated assets (dynamic sitelinks and snippets) are separate (`g/7331111`).
+- **Automated promotions from October 12, 2026** (secondary source: Search Engine Land, October 2026, citing Google's
+  notice): Search and PMax campaigns with location assets and no promotion assets can get promotion assets pulled
+  from the website; they only show under Assets after they get impressions. Opt out at the account level in the
+  automated asset settings (Automated Promotions). An expired promotion still on the page becomes an ad: check the
+  site or opt out.
+- Through the API, creating an asset and linking it are two `mutate` calls; the link cannot be validated with
+  `validate_only` before the asset exists. Before creating, check whether the same `link_text` and `final_urls`
+  already exist (select `asset.final_urls` in the preflight query), or a re-run duplicates assets.
 
 ---
 
-## 7. Negatives - initial launch list
+## 7. Measurement checklist before going live
 
-Before turning the campaign on, configure a **universal negative list** at account level:
-
-```yaml
-universal_negative_keywords:
-  - free
-  - gratis
-  - grátis
-  - download
-  - torrent
-  - crack
-  - pdf
-  - jobs
-  - vagas
-  - careers
-  - salary
-  - salário
-  - tutorial
-  - course
-  - courses
-  - certification
-  - training
-  - DIY
-  - "how to"        # phrase match; blocks "how to remove floor yourself"
-  - youtube
-  - reddit
-  - quora
-  - forum
-  - meaning
-  - definition
-  - "what is"
-  - kid
-  - kids
-  - children
-  - student
-```
-
-Add a vertical-specific list:
-
-```yaml
-local_services_negatives:
-  - rental
-  - locação
-  - "rent a"
-  - "video tutorial"
-
-ecommerce_negatives:
-  - used
-  - segunda mão
-  - refurbished
-  - cheap
-  - barato        # unless this is your positioning
-
-b2b_negatives:
-  - personal use
-  - student
-  - individual
-  - "open source"
-
-legal_services_negatives:
-  - "free consultation"   # if you charge for it
-  - pro bono
-  - aid
-  - legal aid
-```
+- [ ] Google tag on every page; primary conversion created and **tested with one real conversion**.
+- [ ] Each primary action measures what it claims (final page HTML fetched with a browser User-Agent, the public
+      GTM container read); counting "One" for leads.
+- [ ] Calls: a minimum call duration on the action, the call asset pointing to the right action, and the campaign
+      goal including the call category as biddable.
+- [ ] Enhanced Conversions on (one switch since June 2026); GA4 linked; consent set up as the site requires.
+- [ ] Account spending limit and payment method checked.
 
 ---
 
-## 8. Tracking checklist before launch
+## 8. First 14 days
 
-Without this, **do not launch**. Delaying launch 3 days is better than running 30 days with broken tracking.
-
-- [ ] Google tag installed on every page and validated in Tag Assistant.
-- [ ] Conversion action created and linked: Phone Call, Form Submit, etc.
-- [ ] Conversion action marked as **Primary** only for actions you want to optimize.
-- [ ] Correct conversion category: Lead, Purchase, etc.
-- [ ] Conversion value filled in, even if estimated, for Smart Bidding.
-- [ ] Enhanced Conversions ON with hashed user data.
-- [ ] GA4 linked to Google Ads.
-- [ ] GA4 audiences imported.
-- [ ] Test conversion: perform 1 real conversion such as form submit or call, then validate it appears in Google Ads within 24h.
+- **Day 0:** the paused campaign reviewed (ad text against the page, negatives, assets, measurement); turning on is
+  a separate step, with confirmation of what was approved.
+- **Days 1 to 3:** is the ad serving? (`ad_group_ad.primary_status` and the day's impressions; `campaign.primary_status`
+  can lag 40+ minutes). Clearly wrong search terms: gate A.
+- **Days 4 to 7:** search terms and negatives; no cutting on performance with low volume.
+- **Day 14:** the first reading by the rules written before launch (08, section 8). In a low regime, 14 days rarely
+  decide performance; they decide delivery, intent and copy.
 
 ---
 
-## 9. Launch - first 14 days
+## 9. Performance Max
 
-### Day 0 launch
-- Pre-budget locked.
-- Universal negatives applied.
-- 2 RSAs per ad group, Ad Strength >= Good.
-- All extensions configured.
-- **Bid strategy: Maximize Conversions**, no cap for first 72h, then add cap if spend rises too much.
-
-### Days 1-3: aggressive monitoring, minimal changes
-- Verify ads are serving; Search Terms should show impressions.
-- Detect broken tracking: clicks > 50 and 0 conversions appearing -> suspicious.
-- Identify obvious negatives from clearly irrelevant search terms.
-
-### Days 4-7
-- Add negatives based on search terms.
-- Pause headlines with "Low" rating.
-- Check Quality Score baseline.
-
-### Days 8-14
-- First serious performance read.
-- If 10+ conversions -> continue Maximize Conversions with cap.
-- If 30+ conversions -> migrate to Maximize Conversions with tCPA cap.
-- Decide whether day 14 moves to pure tCPA; requires 30+ conversions.
-
-### Day 14 formal review
-- If reaching expected CPA -> pure tCPA, target = current CPA x 1.0.
-- If CPA is much higher -> adjust copy / negatives / targeting.
-- If 0 conversions in 14 days with 50+ clicks -> reassess landing/copy/offer. Pause and replan.
+- **Official budget:** an average daily budget of at least **3x the CPA** of the campaign's actions (`g/15864652`).
+  "Search before PMax" is a heuristic, not a rule.
+- **Priority:** a search identical to an exact Search keyword beats PMax; an identical search theme shares priority
+  with phrase and broad (`g/7478529`).
+- **Search themes:** up to 50 per asset group, with the same priority as phrase and broad (`g/14767319`).
+- **Controls:** campaign and account negatives (only Search and Shopping inventory; up to 10,000 per campaign,
+  `g/15726455`); brand exclusions (`g/13721847`); account-level placement exclusions, which apply to Display, Video,
+  Search, PMax, Demand Gen and App (`g/7331110`).
+- **Reports:** channel performance (Insights > Channel performance, `g/16260130`); search terms in the API through
+  `campaign_search_term_view`; placements in `performance_max_placement_view`.
+- **PMax experiments:** Uplift, Upgrade (Shopping, DSA or Display to PMax) and Optimization (final URL expansion,
+  assets) (`g/12997711`).
 
 ---
 
-## 10. PMax - advanced 2026 setup
-
-### When PMax is worth creating
-
-- Search already runs well and Smart Bidding has learned signals.
-- You have quality assets: images, video, varied copy.
-- Conversion tracking is solid.
-- PMax has at least $30/day; below that, data is weak.
-
-### Asset Group structure
-
-**1 PMax campaign, multiple asset groups by:**
-- Product/service category.
-- Audience persona.
-- Funnel stage.
-
-```yaml
-pmax_campaign:
-  name: "[PMax] Gutter Cleaning - Springfield"
-  budget: 40 USD/day
-  bid: tCPA $50
-
-  asset_groups:
-    - name: "Tile Removal - Homeowners"
-      audience_signal:
-        custom_segments: ["tile removal", "kitchen renovation"]
-        in_market: ["Home Improvement"]
-        your_data: ["Site Visitors 30d"]
-      headlines: 15 tile-focused variations
-      descriptions: 4
-      images: 10-20
-      videos: 2-5, autogenerated or owned
-      logos: required
-      search_themes:    # NEW 2026 - up to 50 per asset group
-        - "tile removal Springfield"
-        - "remove kitchen tile"
-        - "professional tile demolition"
-        # ... up to 50
-
-    - name: "Hardwood Removal - Homeowners"
-      # ... similar
-
-    - name: "Carpet Removal - Property Managers"
-      audience_signal:
-        custom_segments: ["property management software"]
-        # ...
-```
-
-### Search Themes - essential 2026 controls
-
-Search Themes, up to 50 per asset group in 2026, **are keyword-like signals** for PMax. Without them, PMax drifts.
-
-**Recommended distribution from 30-45 total themes:**
-- 20-30 core themes based on proven intent from Search campaign search terms.
-- 15-20 discovery themes: long-tail, new territories.
-- 5-10 seasonal/tactical themes: campaigns, events, launches.
-
-### Brand exclusion + Negative keywords + Placement exclusions
-
-In PMax, always configure **all 3** controls:
-
-```yaml
-pmax_controls:
-  brand_exclusions:
-    - "Competitor A"
-    - "Competitor B"   # brands where you do NOT want to appear
-
-  negative_keyword_lists:    # account-level, now applicable to PMax
-    - universal_negatives_list
-    - vertical_negatives_list
-
-  account_placement_exclusions:    # NEW Jan/2026
-    - mfa_sites_list
-    - mobile_game_spam_list
-    - low_quality_youtube_channels_list
-
-  audience_exclusions:
-    - "Existing Customers (Customer Match)"
-    - "Recent Buyers 30d"
-```
-
----
-
-## 11. Common campaign creation pitfalls
+## 10. Common creation mistakes
 
 | Mistake | Consequence | Fix |
 |---|---|---|
-| Launching with 1 RSA | No rotation, no test, weak Ad Strength | 2+ RSAs per ad group |
-| Location "Presence or Interest" without reason | Captures people who only searched the place | Use `PRESENCE` in most cases |
-| Search Partners ON from day 1 | Questionable traffic quality | Start OFF; test separately |
-| Display Network enabled in Search campaign | Mixed traffic, polluted data | Always OFF in Search |
-| Budget too low: < 5x expected CPA/day | Not enough data for Smart Bidding | Minimum 30x target CPA/month |
-| Conversion not tracked by value | Cannot use tROAS later | Always estimate value |
-| Copying campaign to "reset" | Throws away QS history | Pause weak keywords, keep campaign |
-| Pinning every headline | Ad Strength drops, optimization dies | Do not pin, or use multi-pin sparingly |
-| Negatives only after seeing search terms | Burns the first week of budget | Initial list of 50-100 universal negatives |
-| Launching PMax without Search | PMax canibalizes low-intent queries | Search first, then PMax |
+| One RSA per ad group | no rotation, low rating | 2 RSAs rated Good or Excellent, each with its own URL |
+| Search partners on from day 1 | traffic of uncertain quality | test it in isolation |
+| Display expansion on a lead campaign | mixed traffic | off |
+| A conversion nobody checked | CPA compared in the wrong unit | section 7 |
+| A new campaign turned on directly | spend before review | starts `PAUSED`, turning on is a separate step |
+| An ad that promises what the page does not say | disapproval, frustrated leads | ad text checked against the page |
+| Targeting from an old address | the ad shows far from the business | the live site and a radius around it |
+| Copying a campaign "to reset" it | recreated keywords start without history (heuristic) | adjust the existing campaign |
 
 ---
 
-## 12. Sources (2026 research)
+## Sources
 
-- [Account Structure 2026 - WordStream](https://www.wordstream.com/blog/google-ads-account-structure)
-- [Account Structure Framework 2026 - groas.ai](https://groas.ai/post/google-ads-account-structure-in-2026-the-framework-that-actually-works)
-- [STAG vs SKAG - sitecentre](https://www.sitecentre.com.au/blog/stag-vs-skag-campaigns)
-- [Are SKAGs Still Relevant? - Store Growers](https://www.storegrowers.com/single-keyword-ad-groups/)
-- [RSA Best Practices 2026 - Search South](https://www.search-south.com/2026/02/21/responsive-search-ads-best-practice-in-2026/)
-- [Pinning RSA - Search South](https://www.search-south.com/2026/03/11/pinning-and-responsive-search-ads-when-should-you-use-it/)
-- [Ad Strength - Google Ads Help](https://support.google.com/google-ads/answer/9921843)
-- [Sitelinks 2026 - Search Scientists](https://www.searchscientists.com/adwords-help-sitelink-extensions/)
-- [PMax 2026 Strategy - JumpFly](https://www.jumpfly.com/blog/mastering-google-performance-max-a-2026-strategy-guide/)
-- [PMax Search Themes 2026 - ALM Corp](https://almcorp.com/blog/microsoft-performance-max-50-search-themes-2026-guide/)
-- [PMax Optimization Tips - Search Engine Land](https://searchengineland.com/top-performance-max-optimization-tips-461913)
+Google Ads Help (October 1, 2026): `g/1722043` location options; `g/1722078` language; `g/7193800` Display
+expansion; `g/1722047` search partners; `g/9921843` Ad Strength; `g/2375416` sitelinks; `g/6280012` structured
+snippets; `g/7331111` assets; `g/7331110` placement exclusions; `g/7478529` priority; `g/15864652` PMax budget;
+`g/14767319` search themes; `g/15726455` PMax negatives; `g/13721847` brand settings; `g/16260130` channel
+performance; `g/12997711` PMax experiments. Policy: business name update
+(https://support.google.com/adspolicy/answer/18287059, October 2026).
+API: structured snippet headers (https://developers.google.com/google-ads/api/data/structured-snippet-headers);
+deprecations (https://developers.google.com/google-ads/api/docs/deprecations).
+Secondary: automated promotions (https://searchengineland.com/google-ads-will-automatically-pull-promotions-from-advertisers-websites-493225, October 2026).

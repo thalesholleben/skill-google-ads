@@ -1,585 +1,399 @@
-# 07 - Reporting, GAQL, and Python Automation
+# 07: GAQL, the API and reporting
 
-> Load this file when the user asks to generate reports, write GAQL queries, automate data extraction, or build Google Ads dashboards.
+> Load to write a GAQL query, pull account data, verify a change or build a report. Every query below ran on
+> Google Ads API v25 in October 2026 (read only); the state line says what came back.
 
 ---
 
-## 1. GAQL - Google Ads Query Language
+## 1. How to query
 
-GAQL is the query language of the Google Ads API. Its syntax is similar to SQL.
+GAQL (Google Ads Query Language) runs through the Google Ads API (`googleAds:search` or `googleAds:searchStream`,
+with any official client library or REST) and inside Google Ads Scripts (`AdsApp.search(query)`). The UI Report
+Editor does not take GAQL.
 
-### Basic structure
-
-```sql
-SELECT
-  [fields: resource.field, metrics.field, segments.field]
-FROM
-  [resource]
-WHERE
-  [conditions]
-ORDER BY
-  [field] DESC
-LIMIT
-  [n]
+```text
+POST https://googleads.googleapis.com/v25/customers/<customer_id>/googleAds:search
+{"query": "SELECT campaign.id, metrics.clicks FROM campaign WHERE segments.date DURING LAST_7_DAYS"}
 ```
 
-### Main resources
+`search` returns pages: follow `nextPageToken` until it is empty before you treat the result as complete (the
+scripts here refuse a JSON that still has a `nextPageToken`).
 
-| Resource | Contains |
-|---|---|
-| `campaign` | Metrics by campaign |
-| `ad_group` | Metrics by ad group |
-| `keyword_view` | Metrics by keyword |
-| `search_term_view` | Real triggered search terms |
-| `ad_group_ad` | Metrics by ad |
-| `geographic_view` | Metrics by location |
-| `hourly_metrics_view` | Metrics by hour |
-| `audience_view` | Metrics by audience |
-| `asset_view` | Asset/extension metrics |
-| `campaign_audience_view` | Audiences at campaign level |
+**Version:** v25 (v25.2 stable since September 23, 2026) was the newest on October 3, 2026; v22 sunsets on October 7,
+2026, and v25 is supported until August 2027 (sunset calendar at
+`developers.google.com/google-ads/api/docs/sunset-dates`). Since September 9, 2026 the developer token access level
+moved to the Google Cloud project (developer token policy page).
+
+**Rules that prevent wrong conclusions:**
+- Every query that becomes a claim about "the campaign" carries `campaign.id` in the SELECT (`geographic_view`,
+  `campaign_criterion` and `campaign_asset` return rows of removed campaigns).
+- A field used in WHERE also goes in SELECT (`EXPECTED_REFERENCED_FIELD_IN_SELECT_CLAUSE`).
+- `LAST_N_DAYS` excludes today; for "up to now", `segments.date BETWEEN '<start>' AND '<today>'`.
+- `DURING` only accepts the API's literals (`LAST_7_DAYS`, `LAST_14_DAYS`, `LAST_30_DAYS`, `LAST_MONTH`...):
+  **`LAST_90_DAYS` does not exist** and returns "Invalid date literal". A 90-day window is `BETWEEN`.
+- Recent days are provisional: conversions arrive late. Decide only on mature days (08, section 5).
+- `metrics.conversions` is by **click** date; to match calls, use `metrics.conversions_by_conversion_date`.
+- The search terms report hides part of the spend: reconcile with the total (query 7).
+- Currency is the account's; `*_micros` values divide by 1,000,000.
 
 ---
 
-## 2. Ready-to-use queries
+## 2. Queries
 
-### Campaign performance for the last 30 days
+### 1. Campaigns: performance and auction presence
 
 ```sql
-SELECT
-  campaign.name,
-  campaign.status,
-  campaign.bidding_strategy_type,
-  metrics.impressions,
-  metrics.clicks,
-  metrics.ctr,
-  metrics.average_cpc,
-  metrics.cost_micros,
-  metrics.conversions,
-  metrics.conversions_value,
-  metrics.cost_per_conversion,
-  metrics.search_impression_share,
-  metrics.search_budget_lost_impression_share,
-  metrics.search_rank_lost_impression_share,
-  metrics.search_absolute_top_impression_share
+-- validated on v25, returned rows
+SELECT campaign.id, campaign.name, campaign.status, campaign.bidding_strategy_type,
+  metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions, metrics.conversions_value,
+  metrics.search_impression_share, metrics.search_budget_lost_impression_share,
+  metrics.search_rank_lost_impression_share, metrics.search_absolute_top_impression_share
 FROM campaign
-WHERE
-  segments.date DURING LAST_30_DAYS
-  AND campaign.status = 'ENABLED'
+WHERE segments.date DURING LAST_30_DAYS AND campaign.status = 'ENABLED'
 ORDER BY metrics.cost_micros DESC
 ```
 
----
-
-### Search terms with spend and conversions
+### 2. Why the campaign is limited and what Google suggests
 
 ```sql
-SELECT
-  search_term_view.search_term,
-  search_term_view.status,
-  campaign.name,
-  ad_group.name,
-  metrics.impressions,
-  metrics.clicks,
-  metrics.ctr,
-  metrics.average_cpc,
-  metrics.cost_micros,
-  metrics.conversions,
-  metrics.cost_per_conversion
+-- validated on v25, returned rows
+SELECT campaign.id, campaign.name, campaign.status, campaign.primary_status, campaign.primary_status_reasons,
+  campaign_budget.amount_micros, campaign_budget.recommended_budget_amount_micros
+FROM campaign
+WHERE campaign.status = 'ENABLED'
+```
+
+### 3. Marginal CPA (target simulation)
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign_simulation.campaign_id, campaign_simulation.type, campaign_simulation.modification_method,
+  campaign_simulation.start_date, campaign_simulation.end_date,
+  campaign_simulation.target_cpa_point_list.points
+FROM campaign_simulation
+WHERE campaign_simulation.type = 'TARGET_CPA' AND campaign_simulation.modification_method = 'SCALING'
+```
+
+Each point has `targetCpaMicros`, `biddableConversions`, `costMicros` and `requiredBudgetAmountMicros`. Marginal CPA =
+delta cost / delta conversions between neighboring points (03, section 7). `type = 'BUDGET'` often comes back empty.
+
+### 4. Conversion actions: which are primary and how they count
+
+```sql
+-- validated on v25, returned rows
+SELECT conversion_action.id, conversion_action.name, conversion_action.type, conversion_action.category,
+  conversion_action.primary_for_goal, conversion_action.include_in_conversions_metric,
+  conversion_action.counting_type, conversion_action.status
+FROM conversion_action
+WHERE conversion_action.status = 'ENABLED'
+```
+
+The k of 08 is the number of primary actions with `counting_type = ONE_PER_CLICK`. Campaign-level goals live in
+`campaign_conversion_goal` and `conversion_goal_campaign_config`.
+
+### 5. Conversions by action and campaign
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign.id, segments.conversion_action, segments.conversion_action_name,
+  metrics.conversions, metrics.conversions_by_conversion_date, metrics.all_conversions
+FROM campaign
+WHERE segments.date DURING LAST_30_DAYS
+```
+
+### 6. Conversion delay
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign.id, segments.conversion_lag_bucket, metrics.conversions
+FROM campaign
+WHERE segments.date BETWEEN '2026-07-01' AND '2026-09-30'
+```
+
+### 7. Search terms coverage
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign.id, metrics.clicks, metrics.cost_micros
+FROM campaign
+WHERE segments.date DURING LAST_30_DAYS
+```
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign.id, metrics.clicks, metrics.cost_micros
 FROM search_term_view
-WHERE
-  segments.date DURING LAST_30_DAYS
-  AND metrics.impressions > 0
-ORDER BY metrics.cost_micros DESC
-LIMIT 1000
+WHERE segments.date DURING LAST_30_DAYS
 ```
 
----
+Coverage = the second sum / the first sum, per campaign. `scripts/n_gram_analysis.py` takes the campaign totals as
+`--base-clicks`, `--base-conversions` and `--base-cost` and prints the coverage.
 
-### Keywords with Quality Score
+### 8. Search terms with the keyword that triggered them
 
 ```sql
-SELECT
-  keyword_view.resource_name,
-  ad_group_criterion.keyword.text,
-  ad_group_criterion.keyword.match_type,
-  ad_group_criterion.quality_info.quality_score,
-  ad_group_criterion.quality_info.creative_quality_score,
-  ad_group_criterion.quality_info.post_click_quality_score,
-  ad_group_criterion.quality_info.search_predicted_ctr,
-  campaign.name,
-  ad_group.name,
-  metrics.impressions,
-  metrics.clicks,
-  metrics.cost_micros,
-  metrics.conversions,
-  metrics.cost_per_conversion,
-  metrics.average_cpc
+-- validated on v25, returned rows
+SELECT search_term_view.search_term, search_term_view.status, campaign.id, ad_group.id,
+  segments.keyword.info.text, segments.keyword.info.match_type, segments.search_term_match_type,
+  metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions
+FROM search_term_view
+WHERE segments.date DURING LAST_30_DAYS AND metrics.impressions > 0
+ORDER BY metrics.cost_micros DESC
+```
+
+### 8b. Lifetime search terms (for the negative keyword test)
+
+```sql
+-- validated on v25, returned rows
+SELECT search_term_view.search_term, campaign.id, metrics.clicks, metrics.cost_micros, metrics.conversions
+FROM search_term_view
+WHERE segments.date BETWEEN '2010-01-01' AND '2026-10-03'
+```
+
+Replace the end date with today. Save the full result (all pages) as `.json` and pass it to
+`scripts/negatives.py --terms`: a negative is checked against the term's whole life, not 90 days (02, section 4).
+
+### 9. Campaign-level search terms (Search and PMax)
+
+```sql
+-- validated on v25, returned rows (Search); PMax not seen with data
+SELECT campaign.id, campaign.advertising_channel_type, campaign_search_term_view.search_term,
+  metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions
+FROM campaign_search_term_view
+WHERE segments.date DURING LAST_30_DAYS
+```
+
+In Search it covers the same visible part as `search_term_view`, aggregated by campaign; in PMax it is the path to
+the search terms.
+
+### 10. AI Max search terms (term, headline and URL)
+
+```sql
+-- validated on v25, returns empty unless AI Max is on
+SELECT campaign.id, ai_max_search_term_ad_combination_view.search_term,
+  ai_max_search_term_ad_combination_view.headline, ai_max_search_term_ad_combination_view.landing_page,
+  metrics.impressions, metrics.clicks, metrics.conversions
+FROM ai_max_search_term_ad_combination_view
+WHERE segments.date DURING LAST_30_DAYS
+```
+
+### 11. Keywords with Quality Score (current and historical)
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign.id, campaign.status, ad_group.status, ad_group_criterion.status,
+  ad_group_criterion.keyword.text, ad_group_criterion.keyword.match_type,
+  ad_group_criterion.quality_info.quality_score, ad_group_criterion.quality_info.creative_quality_score,
+  ad_group_criterion.quality_info.post_click_quality_score, ad_group_criterion.quality_info.search_predicted_ctr,
+  metrics.historical_quality_score, metrics.cost_micros, metrics.conversions
 FROM keyword_view
-WHERE
-  segments.date DURING LAST_30_DAYS
-  AND campaign.status = 'ENABLED'
-  AND ad_group.status = 'ENABLED'
+WHERE segments.date DURING LAST_30_DAYS AND campaign.status = 'ENABLED' AND ad_group.status = 'ENABLED'
   AND ad_group_criterion.status = 'ENABLED'
 ORDER BY metrics.cost_micros DESC
 ```
 
----
-
-### Auction Insights by campaign
+### 12. Ads: Ad Strength, approval and real status
 
 ```sql
-SELECT
-  auction_insight.resource_name,
-  campaign.name,
-  auction_insight.domain,
-  metrics.auction_insight_search_impression_share,
-  metrics.auction_insight_search_overlap_rate,
-  metrics.auction_insight_search_position_above_rate,
-  metrics.auction_insight_search_top_impression_percentage,
-  metrics.auction_insight_search_absolute_top_impression_percentage,
-  metrics.auction_insight_search_outranking_share
-FROM auction_insight
-WHERE
-  segments.date DURING LAST_30_DAYS
-  AND campaign.status = 'ENABLED'
-ORDER BY metrics.auction_insight_search_impression_share DESC
-```
-
----
-
-### Performance by device
-
-```sql
-SELECT
-  segments.device,
-  campaign.name,
-  metrics.impressions,
-  metrics.clicks,
-  metrics.ctr,
-  metrics.average_cpc,
-  metrics.cost_micros,
-  metrics.conversions,
-  metrics.cost_per_conversion,
-  metrics.conversion_rate
-FROM campaign
-WHERE
-  segments.date DURING LAST_30_DAYS
-  AND campaign.status = 'ENABLED'
-ORDER BY metrics.cost_micros DESC
-```
-
----
-
-### Performance by hour of day
-
-```sql
-SELECT
-  segments.hour,
-  segments.day_of_week,
-  campaign.name,
-  metrics.impressions,
-  metrics.clicks,
-  metrics.cost_micros,
-  metrics.conversions,
-  metrics.cost_per_conversion
-FROM campaign
-WHERE
-  segments.date DURING LAST_30_DAYS
-  AND campaign.status = 'ENABLED'
-ORDER BY segments.day_of_week, segments.hour
-```
-
----
-
-### Performance by location
-
-```sql
-SELECT
-  geographic_view.country_criterion_id,
-  geographic_view.location_type,
-  campaign.name,
-  metrics.impressions,
-  metrics.clicks,
-  metrics.cost_micros,
-  metrics.conversions,
-  metrics.cost_per_conversion
-FROM geographic_view
-WHERE
-  segments.date DURING LAST_30_DAYS
-  AND campaign.status = 'ENABLED'
-ORDER BY metrics.cost_micros DESC
-```
-
----
-
-### Ad performance with Ad Strength
-
-```sql
-SELECT
-  ad_group_ad.ad.id,
-  ad_group_ad.ad.responsive_search_ad.headlines,
-  ad_group_ad.ad_strength,
-  ad_group_ad.policy_summary.approval_status,
-  campaign.name,
-  ad_group.name,
-  metrics.impressions,
-  metrics.clicks,
-  metrics.ctr,
-  metrics.conversions,
-  metrics.cost_micros
+-- validated on v25, returned rows
+SELECT campaign.id, campaign.status, ad_group.id, ad_group.status, ad_group_ad.status, ad_group_ad.ad.id,
+  ad_group_ad.ad_strength, ad_group_ad.policy_summary.approval_status, ad_group_ad.primary_status,
+  metrics.impressions, metrics.clicks, metrics.conversions, metrics.cost_micros
 FROM ad_group_ad
-WHERE
-  segments.date DURING LAST_30_DAYS
-  AND campaign.status = 'ENABLED'
-  AND ad_group.status = 'ENABLED'
+WHERE segments.date DURING LAST_30_DAYS AND campaign.status = 'ENABLED' AND ad_group.status = 'ENABLED'
   AND ad_group_ad.status = 'ENABLED'
-ORDER BY metrics.impressions DESC
 ```
 
----
+An ad's whole life (before pausing it under gate C): replace the date with
+`segments.date BETWEEN '2010-01-01' AND '<today>'`.
 
-### Zero-conversion wasted spend (search terms)
+### 13. Campaign assets serving
 
 ```sql
-SELECT
-  search_term_view.search_term,
-  campaign.name,
-  ad_group.name,
-  metrics.cost_micros,
-  metrics.clicks,
-  metrics.conversions,
-  metrics.impressions
-FROM search_term_view
-WHERE
-  segments.date DURING LAST_30_DAYS
-  AND metrics.conversions < 0.01
-  AND metrics.cost_micros > 5000000
-ORDER BY metrics.cost_micros DESC
-LIMIT 200
+-- validated on v25, returned rows
+SELECT campaign.id, campaign.status, asset.id, asset.type, asset.source, campaign_asset.field_type,
+  campaign_asset.status, metrics.impressions, metrics.clicks, metrics.conversions
+FROM campaign_asset
+WHERE segments.date DURING LAST_30_DAYS AND campaign.status = 'ENABLED'
 ```
 
-`cost_micros > 5000000` means more than $5 spent without conversion.
+Metrics on a call asset **do not prove calls**: they are the conversions of the impressions where it served. Proof of
+a call is `call_view` (query 17).
 
----
-
-### Weekly time series
+### 14. Negatives at every level
 
 ```sql
-SELECT
-  segments.week,
-  metrics.impressions,
-  metrics.clicks,
-  metrics.cost_micros,
-  metrics.conversions,
-  metrics.cost_per_conversion,
-  metrics.conversion_rate
+-- validated on v25, returned rows
+SELECT shared_set.id, shared_set.name, shared_set.type, shared_set.member_count, shared_set.status
+FROM shared_set
+```
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign.id, campaign_shared_set.shared_set, campaign_shared_set.status
+FROM campaign_shared_set
+```
+
+```sql
+-- validated on v25, returned rows
+SELECT customer_negative_criterion.id, customer_negative_criterion.type,
+  customer_negative_criterion.negative_keyword_list.shared_set
+FROM customer_negative_criterion
+```
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign.id, campaign_criterion.criterion_id, campaign_criterion.keyword.text,
+  campaign_criterion.keyword.match_type
+FROM campaign_criterion
+WHERE campaign_criterion.negative = TRUE AND campaign_criterion.type = 'KEYWORD'
+```
+
+The keywords of the lists live in `shared_criterion`. The account-level negative list is the `shared_set` of type
+`ACCOUNT_LEVEL_NEGATIVE_KEYWORDS` pointed to by `customer_negative_criterion.negative_keyword_list`.
+
+### 15. Where people were (county, physical presence only)
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign.id, campaign.status, segments.geo_target_county, geographic_view.location_type,
+  metrics.clicks, metrics.cost_micros, metrics.conversions
+FROM geographic_view
+WHERE segments.date DURING LAST_30_DAYS AND campaign.status = 'ENABLED'
+  AND geographic_view.location_type = 'LOCATION_OF_PRESENCE'
+```
+
+`geographic_view.location_type` separates **presence** (`LOCATION_OF_PRESENCE`, where the person was) from **interest**
+(`AREA_OF_INTEREST`, the place they searched about). Without the filter both mix; to claim physical location, filter
+presence. The view is more granular than the target; the configured target lives in `campaign_criterion`. Geo names
+come from `geo_target_constant`.
+
+### 16. Device and hour
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign.id, segments.device, segments.day_of_week, segments.hour,
+  metrics.clicks, metrics.cost_micros, metrics.conversions
 FROM campaign
-WHERE
-  segments.date BETWEEN '2026-01-01' AND '2026-04-27'
-  AND campaign.status = 'ENABLED'
+WHERE segments.date DURING LAST_30_DAYS AND campaign.status = 'ENABLED'
+```
+
+### 17. Calls one by one
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign.id, call_view.start_call_date_time, call_view.call_duration_seconds, call_view.type,
+  call_view.call_status
+FROM call_view
+```
+
+`call_view` accepts neither `segments.date` nor `metrics.calls`: filter the date on your side. To prove that an
+action receives the calls, correlate by day with `conversions_by_conversion_date` of **every** call-category action.
+
+### 18. Verifying a change the same day
+
+```sql
+-- validated on v25, returned rows
+SELECT change_status.resource_type, change_status.resource_status, change_status.last_change_date_time,
+  change_status.campaign, change_status.ad_group
+FROM change_status
+WHERE change_status.last_change_date_time >= '2026-10-01 00:00:00'
+  AND change_status.last_change_date_time < '2026-10-02 00:00:00'
+LIMIT 10000
+```
+
+- **A half-open window up to the next midnight, in the account time zone.** A date without a time means midnight:
+  `<= '2026-10-01'` misses every change of that day. `change_status` requires a closed range and a `LIMIT` of up to
+  10,000.
+- **It is not immediate:** the official documentation says a change can take **up to 3 minutes** to show
+  (`developers.google.com/google-ads/api/docs/change-status`), and 10 minutes has been observed. An empty result
+  right after applying proves nothing.
+- **The check is re-reading the changed resources** (is the expected state there?); `change_status` comes after at
+  least 3 minutes, queried again every minute for up to 15 minutes, and only then proves that **nothing beyond** the
+  plan changed: a baseline before, a delta after, matched by resource identity. `change_event` lags 15 to 20 minutes
+  and does not show changes made by Google.
+
+### 19. Account spending limit
+
+```sql
+-- validated on v25, returned rows
+SELECT account_budget.status, account_budget.approved_spending_limit_micros,
+  account_budget.amount_served_micros, account_budget.approved_end_time_type, account_budget.total_adjustments_micros
+FROM account_budget
+```
+
+`total_adjustments_micros` is the promotional credit **granted**, not used (usage and expiry only in the UI, under
+Billing > Promotions).
+
+### 20. Weekly series
+
+```sql
+-- validated on v25, returned rows
+SELECT campaign.id, segments.week, metrics.clicks, metrics.cost_micros, metrics.conversions
+FROM campaign
+WHERE segments.date BETWEEN '2026-07-01' AND '2026-09-30' AND campaign.status = 'ENABLED'
 ORDER BY segments.week
 ```
 
 ---
 
-## 3. Google Ads automation scripts (JavaScript)
+## 3. What does not come out of the API
 
-### Budget pacing monitor, runs daily
+| Data | Why | Where to get it |
+|---|---|---|
+| Auction Insights | `auction_insight_*` metrics need an allowlist (403 `METRIC_ACCESS_DENIED`); `FROM auction_insight` does not exist | the UI or its CSV export |
+| Promotional credit usage and expiry | the API only has what was granted | Billing > Promotions |
+| Asset performance labels in small accounts | come back `NOT_APPLICABLE` | none; decide by CTR and conversions with sample (08) |
+| Daily and hourly data older than 37 months | retention limited since June 2026 | none |
 
-```javascript
-// Sends email if projected spend > monthly goal x 1.10
-
-function main() {
-  var today = new Date();
-  var dayOfMonth = today.getDate();
-  var daysInMonth = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
-
-  var MONTHLY_BUDGET = 1800; // USD
-  var EMAIL_RECIPIENT = "your-email@example.com";
-
-  var campaigns = AdsApp.campaigns()
-    .withCondition("Status = ENABLED")
-    .forDateRange("THIS_MONTH")
-    .get();
-
-  var totalSpent = 0;
-  while (campaigns.hasNext()) {
-    var c = campaigns.next();
-    totalSpent += c.getStatsFor("THIS_MONTH").getCost();
-  }
-
-  var projected = (totalSpent / dayOfMonth) * daysInMonth;
-  var paceRatio = projected / MONTHLY_BUDGET;
-
-  if (paceRatio > 1.10 || paceRatio < 0.80) {
-    MailApp.sendEmail(
-      EMAIL_RECIPIENT,
-      "Google Ads Pacing Alert - " + today.toDateString(),
-      "Current spend: $" + totalSpent.toFixed(2) + "\n" +
-      "Month projection: $" + projected.toFixed(2) + "\n" +
-      "Goal: $" + MONTHLY_BUDGET + "\n" +
-      "Pacing: " + (paceRatio * 100).toFixed(1) + "%\n" +
-      (paceRatio > 1.10 ? "ABOVE budget!" : "BELOW budget!")
-    );
-  }
-}
-```
+Resources that **do not exist** in v25 (older guides cite them): `hourly_metrics_view` (use `segments.hour` on
+`campaign`), `asset_view` (use `campaign_asset`, `ad_group_asset`, `asset_field_type_view`, `asset_group_asset` for
+PMax), `FROM auction_insight`. For counties, `segments.geo_target_county` (query 15), not `country_criterion_id`.
 
 ---
 
-### CPA anomaly detector, runs daily
+## 4. Client report
 
-```javascript
-function main() {
-  var LOOKBACK_DAYS = 14;
-  var CPA_SPIKE_FACTOR = 1.5;
-  var EMAIL_RECIPIENT = "your-email@example.com";
+A monthly report the client reads in five minutes, built from the queries above (no template file needed):
 
-  var campaigns = AdsApp.campaigns()
-    .withCondition("Status = ENABLED")
-    .get();
+1. **Summary of the month** (3 sentences): spend, contacts by kind (calls, forms, bookings), cost per contact, and the
+   comparison with last month **and** the same month last year.
+2. **What each number measures**: one line per primary action ("call of 60+ seconds", "quote form sent").
+3. **Performance table** by campaign: spend, clicks, contacts, cost per contact; a metric that got worse stays on
+   its own line, not hidden in the total.
+4. **Where people were** (query 15) and **when** (query 16), only if it changed a decision.
+5. **What we did** this month and **why** (each change with its number).
+6. **Next steps**, specific ("pause keyword X", "test page Y"), never vague ("monitor").
+7. **Budget**: current, proposed and the reason, when there is a proposal.
 
-  var alerts = [];
-
-  while (campaigns.hasNext()) {
-    var c = campaigns.next();
-    var statsYesterday = c.getStatsFor("YESTERDAY");
-    var statsTrailing  = c.getStatsFor("LAST_14_DAYS");
-
-    var convYesterday = statsYesterday.getConversions();
-    var costYesterday = statsYesterday.getCost();
-    var convTrailing  = statsTrailing.getConversions();
-    var costTrailing  = statsTrailing.getCost();
-
-    if (convTrailing < 5) continue; // not enough data
-
-    var cpaYesterday = convYesterday > 0 ? costYesterday / convYesterday : 999;
-    var cpaTrailing  = costTrailing / convTrailing;
-
-    if (cpaYesterday > cpaTrailing * CPA_SPIKE_FACTOR) {
-      alerts.push(c.getName() + ": CPA yesterday=$" + cpaYesterday.toFixed(0) +
-                  " vs 14d avg=$" + cpaTrailing.toFixed(0));
-    }
-
-    if (convYesterday === 0 && costYesterday > 50) {
-      alerts.push(c.getName() + ": $" + costYesterday.toFixed(0) + " spent, 0 conv yesterday!");
-    }
-  }
-
-  if (alerts.length > 0) {
-    MailApp.sendEmail(
-      EMAIL_RECIPIENT,
-      "Google Ads Anomaly Detected",
-      alerts.join("\n")
-    );
-  }
-}
-```
+Checklist before sending:
+- [ ] Period checked against the account; recent days mature or marked as partial.
+- [ ] Contacts counted by primary action, with what each one measures written; clicks on a phone number never added
+      to contacts.
+- [ ] Calls add up every call action (Google can split calls between two actions).
+- [ ] Comparison with last month **and** with the same month last year.
+- [ ] No market benchmark where the conversion is not the same unit.
+- [ ] Specific next steps.
 
 ---
 
-### Broken URL checker, runs daily
+## 5. Scripts
 
-```javascript
-function main() {
-  var EMAIL_RECIPIENT = "your-email@example.com";
-  var brokenUrls = [];
-
-  var ads = AdsApp.ads()
-    .withCondition("Status = ENABLED")
-    .withCondition("CampaignStatus = ENABLED")
-    .get();
-
-  while (ads.hasNext()) {
-    var ad = ads.next();
-    var url = ad.urls().getFinalUrl();
-    if (!url) continue;
-
-    try {
-      var response = UrlFetchApp.fetch(url, {muteHttpExceptions: true});
-      var code = response.getResponseCode();
-      if (code >= 400) {
-        brokenUrls.push(url + " -> HTTP " + code + " (" + ad.getCampaign().getName() + ")");
-      }
-    } catch(e) {
-      brokenUrls.push(url + " -> Error: " + e.message);
-    }
-  }
-
-  if (brokenUrls.length > 0) {
-    MailApp.sendEmail(
-      EMAIL_RECIPIENT,
-      "Broken URLs - Google Ads",
-      brokenUrls.join("\n")
-    );
-  }
-}
-```
+`scripts/n_gram_analysis.py` (n-grams with coverage and a guard), `scripts/negatives.py` (overblocking test for
+negatives), `scripts/stats.py` (the math of 08), `scripts/budget.py` (spend limits, caps and budget windows) and
+`scripts/self_test.py`. Usage in `scripts/README.md`.
 
 ---
 
-## 4. `.docx` report format (Python)
+## Sources
 
-The scripts in `scripts/` generate Word reports. Section structure:
-
-### Internal report (`build_report.py`)
-
-```text
-1. Executive Summary
-   - Period KPIs
-   - Comparison vs previous month
-
-2. Performance by Campaign
-   - Table: campaign x impressions x clicks x conv x CPA x CTR
-
-3. Performance by Device
-   - Table: Mobile / Desktop / Tablet
-
-4. Search Terms - Top Performers
-   - Top 20 converting queries
-
-5. Zero-Conv Waste
-   - Queries that burned budget without conversions
-
-6. Auction Insights
-   - Top 5 competitors + interpretation
-
-7. Performance by County / Geo
-   - Table: location x conversions x CPA
-
-8. Keyword Analysis
-   - Average QS, paused keywords, recommendations
-
-9. Negative Keywords Added
-   - Period list
-
-10. Action Plan
-    - Prioritized next steps
-```
-
-### Client report (`build_report_cliente.py`)
-
-```text
-Monthly Summary (Heading 2 - appears in table of contents)
-
-1. Period Results (Heading 3)
-2. Traffic Quality (Heading 3)
-3. Market Positioning (Heading 3)
-4. Improvements Applied (Heading 3)
-5. Goals vs Actuals (Heading 3)
-6. Budget Reallocation (Heading 3)
-7. Strategic Notes (Heading 3)
-
-[Font: Montserrat | Tone: positive | Omits: internal failures]
-```
-
----
-
-## 5. N-gram analysis in Python - how to use
-
-The script `scripts/n_gram_analysis.py` analyzes search terms from a CSV exported from Google Ads.
-
-### Input: export from Google Ads
-
-1. Go to **Keywords -> Search Terms**.
-2. Select period: 30-90 days.
-3. Required columns: `Search term`, `Clicks`, `Impressions`, `Cost`, `Conversions`, `CTR`, `Avg. CPC`.
-4. Export -> CSV.
-
-### Run the script
-
-```bash
-python n_gram_analysis.py search_terms.csv
-```
-
-Output: `ngram_report.csv` with 3 sheets/tables:
-- `1grams` - single tokens.
-- `2grams` - word pairs.
-- `3grams` - word trios.
-
-Each table is sorted by descending `Cost`, with columns `Clicks`, `Conversions`, `CPA`, `CTR`.
-
-### Interpret results
-
-```text
-1-gram: "free" | Cost: $85 | Conv: 0 -> negative "free" (exact match)
-1-gram: "removal" | Cost: $420 | Conv: 15 -> core keyword, keep
-
-2-gram: "gutter cleaning" | Cost: $220 | Conv: 12 -> great, promote to exact
-2-gram: "diy floor" | Cost: $45 | Conv: 0 -> negative "diy" or phrase "diy floor"
-
-3-gram: "remove tile yourself" | Cost: $30 | Conv: 0 -> negative phrase
-3-gram: "gutter cleaning springfield" | Cost: $180 | Conv: 9 -> EXACT MATCH NOW
-```
-
----
-
-## 6. Looker Studio - dashboard template
-
-Connection: Google Ads Data Source -> select account.
-
-### Recommended pages
-
-**Page 1 - Executive Summary**
-- Scorecards: Spend, Conversions, CPA, CTR, ROAS.
-- Time series: Conv + CPA for last 90 days.
-- Bar chart: Campaigns by Conversions, sorted.
-
-**Page 2 - Keywords & Quality Score**
-- Table: Keyword, QS, Impr, Clicks, Cost, Conv, CPA.
-- Filter: QS slider from 1 to 10.
-- Conditional formatting: QS <= 5 in red.
-
-**Page 3 - Geo & Device**
-- Geo map: Conversions by county.
-- Table: Device, Conv, CPA, CTR.
-
-**Page 4 - Auction Insights**
-- Table: Competitor, IS, Overlap Rate, AbsTop Rate.
-- Trend: weekly comparison.
-
-**Page 5 - Search Terms**
-- Table: Search term, Cost, Conv, CPA.
-- Filter: Conversions = 0 for waste analysis.
-
-### Useful calculated fields
-
-```sql
--- ROAS
-SUM(conversions_value) / SUM(cost)
-
--- CPA
-SUM(cost) / SUM(conversions)
-
--- Conv Rate
-SUM(conversions) / SUM(clicks)
-
--- Zero-conv waste %
-SUM(IF(conversions = 0, cost, 0)) / SUM(cost)
-```
-
----
-
-## 7. Monthly report checklist
-
-Before delivering any report, validate:
-
-- [ ] Correct period: start and end dates checked against the account.
-- [ ] Conversions: counting **Primary only**, not mixed with Secondary.
-- [ ] CPA calculated from Primary conversions.
-- [ ] Auction Insights uses the same period as the report.
-- [ ] Benchmark: compare with previous month + same month last year for seasonality.
-- [ ] Relevant period notes: product launch, landing change, new campaign.
-- [ ] Next steps are **specific and actionable**, such as "pause keyword X", not vague like "monitor performance".
-
----
-
-## 8. Sources (2026 research)
-
-- [GAQL Overview - Google Ads API](https://developers.google.com/google-ads/api/docs/query/overview)
-- [GAQL Grammar - Google Ads API](https://developers.google.com/google-ads/api/docs/query/grammar)
-- [Google Ads Scripts 2026 - groas.ai](https://groas.ai/post/best-google-ads-scripts-2026-install-guide-automation-limits)
-- [Automate Reporting with AI - Cotera](https://cotera.co/articles/automate-google-ads-reporting-ai)
-- [Scripts Automation 2026 - Yeezypay](https://yeezypay.io/blog/google-ads-scripts-in-2026-how-to-automate-monitor)
-- [N-gram Analysis - Adalysis](https://adalysis.com/blog/n-gram-analysis-the-secret-to-scalable-search-term-management-in-google-ads/)
-- [Free Python N-gram Script - Ayima](https://www.ayima.com/insights/ngram-script-for-google-ads.html)
+Google Ads API (October 2026): release notes (https://developers.google.com/google-ads/api/docs/release-notes, read
+October 3, 2026); v25 fields (https://developers.google.com/google-ads/api/fields/v25/overview); segments
+(https://developers.google.com/google-ads/api/fields/v25/segments); PMax reporting
+(https://developers.google.com/google-ads/api/performance-max/reporting); AI Max
+(https://developers.google.com/google-ads/api/docs/campaigns/ai-max-for-search-campaigns/getting-started); sunset
+dates (https://developers.google.com/google-ads/api/docs/sunset-dates); developer token
+(https://developers.google.com/google-ads/api/docs/api-policy/developer-token); change status
+(https://developers.google.com/google-ads/api/docs/change-status); deprecations
+(https://developers.google.com/google-ads/api/docs/deprecations). Google Ads Scripts reference
+(https://developers.google.com/google-ads/scripts/docs/reference/adsapp/adsapp).

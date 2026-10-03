@@ -1,0 +1,6 @@
+interface:
+  display_name: "Google Ads Manager"
+  short_description: "Google Ads: diagnosis, bidding, keywords, negatives, ads, tests, budget and reporting"
+  default_prompt: "Use $google-ads-manager to analyze, build or optimize this Google Ads account, including the low-volume rules and the negative keyword test."
+policy:
+  allow_implicit_invocation: true

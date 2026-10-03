@@ -1,33 +1,35 @@
 # Contributing
 
-Thanks for improving this Google Ads skill. This repository is a knowledge package plus a few standalone Python templates, not a web app or service.
+Thanks for improving this Google Ads skill. This repository is a knowledge package plus a few standalone Python tools, not a web app or service.
 
 ## Good contributions
 
-- Improve Google Ads strategy guidance with clear 2026 context.
-- Add or refine reference material in `references/`.
-- Improve the Python report and n-gram scripts without adding external service dependencies.
-- Add synthetic examples that help agents understand how to use the skill.
-- Improve installation, security, or agent instructions.
+- Correct or update a platform fact, with the Google page (or labeled third-party source) and the date you checked it.
+- Add or refine reference material in `references/`, one topic per file.
+- Improve the scripts without adding dependencies: they stay standard library only (Python 3.10+).
+- Add synthetic fixtures that make a test or an example clearer.
+- Improve installation, security or agent instructions.
 
 ## Before opening a pull request
 
 1. Read `SKILL.md` first.
-2. Keep reference files focused on one topic.
-3. Do not commit credentials, real customer IDs, account IDs, OAuth tokens, or real client exports.
-4. Do not replace the fictional script data with private client data.
-5. Run a basic syntax check for changed Python files:
+2. Do not commit credentials, real customer IDs, account IDs, OAuth tokens or real client exports. Fixtures are synthetic and live in `assets/fixtures/`.
+3. GAQL you add must run on the current API version; write its state next to it.
+4. Run the self test (the CI runs the same on Python 3.10 and 3.12):
 
 ```bash
-python -m py_compile scripts/*.py
+python -B scripts/self_test.py
 ```
+
+It compiles every script with the bytecode outside the repo, runs the tool tests and checks repository hygiene. Do not run `python -m py_compile` on its own: it writes `__pycache__` into the repo.
 
 ## Style
 
-- Prefer practical account-operator guidance over generic PPC definitions.
-- Use Markdown headings and short sections so agents can load only the relevant context.
-- Keep examples copyable.
-- Explain assumptions when a recommendation depends on volume, conversion tracking, attribution, or budget.
+- Practical account-operator guidance over generic PPC definitions.
+- Short sections so agents can load only the relevant context.
+- Copyable examples.
+- State assumptions when a recommendation depends on volume, conversion tracking, attribution or budget.
+- No em dashes and no spaced hyphens used as punctuation (the self test checks it).
 
 ## Security
 

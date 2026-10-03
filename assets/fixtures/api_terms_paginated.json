@@ -1,0 +1,36 @@
+{
+ "results": [
+  {
+   "campaign": {
+    "id": "111"
+   },
+   "metrics": {
+    "clicks": "4",
+    "impressions": "40",
+    "costMicros": "12000000",
+    "conversions": 1.0,
+    "conversionsValue": 300.0
+   },
+   "searchTermView": {
+    "searchTerm": "free estimate roof repair",
+    "status": "NONE"
+   }
+  },
+  {
+   "campaign": {
+    "id": "222"
+   },
+   "metrics": {
+    "clicks": "1",
+    "impressions": "9",
+    "costMicros": "3000000",
+    "conversions": 0.9992
+   },
+   "searchTermView": {
+    "searchTerm": "Free Estimate roof repair",
+    "status": "NONE"
+   }
+  }
+ ],
+ "nextPageToken": "page-2"
+}
