@@ -178,6 +178,12 @@ templates and the Google Ads Scripts snippets. Details and migration notes: [CHA
 
 ---
 
+## Portuguese edition
+
+A Brazilian Portuguese edition of this skill ships in the [Pack Tráfego e Marketing](https://skills.thalesgomes.com/pack/trafego), together with Meta Ads, copy and tracking skills for Claude Code and Codex. This English edition stays free under MIT.
+
+---
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Every platform claim needs a source and a date.
